@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightvertise | Home</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="page-wrapper">
+        <nav class="navbar">
+            <a class="navbar-brand">
+                <img src="assets/img/logo.png" alt="Lightvertise" class="img-fluid" width="180">
+            </a>
+        </nav>
+        <section class="main-section">
+            <div class="container">
+                <h2 class="text-center">Konfigurieren Sie ihre individuelle Leuchtreklame</h2>
+                <div class="row">
+                    <div class="col-12 col-md-12 mx-auto">
+                        <div class="row">
+                            <div class="col-12 col-md-6">
+                                <div class="card custom-card">
+                                    <div class="card-body">
+                                        <p>
+                                            Ihre hochgeladene Datei
+                                        </p>
+                                        <div class="box">
+                                            <svg width="20" height="24" viewBox="0 0 20 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M12 7.01467V0.473672C12.913 0.819672 13.753 1.35267 14.465 2.06367L17.949 5.54967C18.661 6.26067 19.194 7.10067 19.54 8.01367H13C12.448 8.01367 12 7.56567 12 7.01467ZM19.976 10.0147H13C11.346 10.0147 10 8.66867 10 7.01467V0.0376719C9.839 0.0266719 9.678 0.0136719 9.515 0.0136719H5C2.243 0.0146719 0 2.25767 0 5.01467V19.0147C0 21.7717 2.243 24.0147 5 24.0147H15C17.757 24.0147 20 21.7717 20 19.0147V10.4997C20 10.3367 19.987 10.1757 19.976 10.0147ZM13.707 16.8947C13.512 17.0897 13.256 17.1877 13 17.1877C12.744 17.1877 12.488 17.0897 12.293 16.8947L11 15.6017V19.9997C11 20.5517 10.552 20.9997 10 20.9997C9.448 20.9997 9 20.5517 9 19.9997V15.6017L7.707 16.8947C7.316 17.2857 6.684 17.2857 6.293 16.8947C5.902 16.5037 5.902 15.8717 6.293 15.4807L7.907 13.8667C9.061 12.7127 10.939 12.7127 12.094 13.8667L13.708 15.4807C14.099 15.8717 14.099 16.5037 13.708 16.8947H13.707Z"
+                                                    fill="#23A6F0" />
+                                            </svg>
+                                            <span class="ml-2 d-inline-block" id="fileName"></span>
+                                            <label for="uploadFile_new" class="ml-1 d-inline-block text-primary mb-0 replaceFile">Datei ersetzen</label>
+                                            <span class="ml-1 d-inline-block text-right float-right" id="fileSize"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card custom-card">
+                                    <div class="card-body">
+                                        <p>
+                                            Geben Sie <strong>eines der drei Maße</strong>ein und unsere KI berechnet
+                                            die Größe der einzelnen Elemente sowie die Gesamtabmessung.
+                                        </p>
+                                        <hr class="my-0">
+                                        <ul class="nav nav-tabs" id="tablist" role="tablist">
+                                            <li class="nav-item">
+                                                <button class="nav-link active" data-toggle="tab"
+                                                    data-target="#gesamtlänge">Gesamtlänge</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button class="nav-link" data-toggle="tab"
+                                                    data-target="#gesamthöhe">Gesamthöhe</button>
+                                            </li>
+                                            <li class="nav-item">
+                                                <button class="nav-link" id="contact-tab" data-toggle="tab"
+                                                    data-target="#contact">Höchstes Element</button>
+                                            </li>
+                                        </ul>
+                                        <div class="tab-content" id="tabContent">
+                                            <div class="tab-pane fade show active" id="gesamtlänge">
+                                                <div class="mb-20">Gesamtlänge</div>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="custom-select">
+                                                        <span class="text-primary reference_height">322</span>
+                                                        <span class="border-left">cm</span>
+                                                    </div>
+                                                    <div class="slider d-flex">
+                                                        <div class="slidecontainer">
+                                                            <input type="range" min="15" max="140" value="20"
+                                                                class="w-100" id="range">
+                                                            <div
+                                                                class="w-100 d-flex justify-content-between slider-text">
+                                                                <span>
+                                                                    15 cm
+                                                                </span>
+                                                                <span>
+                                                                    140 cm
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="card custom-card upload-box" for="uploadFile" id="uploadBox">
+                                    <input type="file" hidden id="uploadFile" accept="image/png, image/jpeg">
+                                    <div class="card-body">
+                                        <div class="inner-content">
+                                            <svg width="94" height="94" viewBox="0 0 94 94" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                                    d="M69.7191 3.19622C73.4433 -0.941719 79.9317 -0.941703 83.6559 3.19623L93.0728 13.6595C94.2273 14.9423 94.1234 16.9182 92.8405 18.0728C91.5577 19.2273 89.5817 19.1234 88.4272 17.8404L79.8125 8.26859V34.5C79.8125 36.2259 78.4134 37.625 76.6875 37.625C74.9616 37.625 73.5625 36.2259 73.5625 34.5V8.26859L64.9478 17.8404C63.7933 19.1234 61.8173 19.2273 60.5345 18.0728C59.2516 16.9182 59.1477 14.9423 60.3022 13.6595L69.7191 3.19622ZM25.125 6.37498C14.7697 6.37498 6.375 14.7697 6.375 25.125V68.875C6.375 69.4762 6.4033 70.0707 6.45863 70.6575L13.5453 59.3189C21.4011 46.7495 39.2198 45.4673 48.7942 56.7826L56.8698 66.3264C64.0125 55.5381 80.4638 55.3986 87.625 66.5961V47C87.625 45.274 89.0241 43.875 90.75 43.875C92.4759 43.875 93.875 45.274 93.875 47V68.875C93.875 82.6822 82.6822 93.875 68.875 93.875H25.125C11.3179 93.875 0.125 82.6822 0.125 68.875V25.125C0.125 11.3179 11.3179 0.124984 25.125 0.124984H52.4688C54.1947 0.124984 55.5938 1.52409 55.5938 3.24998C55.5938 4.97588 54.1947 6.37498 52.4688 6.37498H25.125Z"
+                                                    fill="#23A6F0" />
+                                            </svg>
+
+                                            <h4>
+                                                Laden Sie hier Ihre Logodatei hoch
+                                            </h4>
+                                            <p class="text-muted">
+                                                JPG oder PNG bis max. 10MB
+                                            </p>
+                                            <button class="btn btn-outline-primary" id="labelButton">Datei wählen</button>
+                                        </div>
+                                    </div>
+                                </label>
+                                <div class="card custom-card uploaded" id="uploadedFile">
+                                    <div class="card-body">
+                                        <div class="inner-content">
+                                            <div class="uploaded-img">
+                                                <!-- <img src="assets/img/upload-logo.png" alt="450" class="img-fluid my-0" id="uploadedImg"> -->
+                                                <img src="" alt="450" class="img-fluid my-0" id="uploadedImg">
+                                            </div>
+                                            <div class="text-right">
+                                                <p>Kalkulierter Preis:</p>
+                                                <!-- <h4>€ 9.425,-</h4> -->
+                                                <h4 class="price_including_rail">-</h4>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row my-4">
+                    <div class="col-12">
+                        <div class="text-center">
+                            <button class="btn btn-outline-default btn-lg mr-3" disabled>Preis kalkulieren</button>
+                            <button class="btn btn-primary btn-lg" disabled data-toggle="modal"
+                                data-target="#detailModal" id="modalButton">Sofortangebot erhalten</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="modal fade" id="detailModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ihre Kontaktdaten</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <svg width="24" height="26" viewBox="0 0 24 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M18 6.29004L6.00038 18.8695" stroke="#150A33" stroke-width="1.5"
+                                stroke-linecap="round" />
+                            <path d="M18 18.8701L6.00038 6.29068" stroke="#150A33" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+
+                    </button>
+                </div>
+                <form id="contactForm">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Firma</label>
+                            <select name="company_name" id="" class="form-control">
+                                <option value="Runourcode GmbH">Runourcode GmbH</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="">Name <span class="text-primary">*</span></label>
+                            <input type="text" name="customer_name" class="form-control" placeholder="David De Matteo">
+                        </div>
+                        <div class="form-group">
+                            <label for="">E-mail <span class="text-primary">*</span></label>
+                            <input type="email" name="customer_email" class="form-control" placeholder="mail@runourcode.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Telefon<span class="text-primary">*</span></label>
+                            <input type="text" name="customer_phone" class="form-control" placeholder="09101 478930">
+                        </div>
+                        <div class="form-group">
+                            <label for="">Straße<span class="text-primary">*</span></label>
+                            <input type="text" name="customer_street" class="form-control" placeholder="Nürnberger Straße 46">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="">PLZ<span class="text-primary">*</span></label>
+                                    <input type="text" name="customer_zipcode" class="form-control" placeholder="90579">
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <label for="">Stadt<span class="text-primary">*</span></label>
+                                    <input type="text" name="customer_city" class="form-control" placeholder="Langenzenn">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-lg contactFormAction">Sofortangebot erhalten</button>
+                        <p>Your personal data will be used to process your order, support your experience throughout this
+                            website, and for other purposes described in our privacy policy.</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="assets/js/jquery-3.7.1.js"></script>
+    <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let fileType;
+        $("#uploadedFile").hide();
+        $("#labelButton").on("click" , function(){
+            $("#uploadFile").trigger("click");
+        })
+        $("#uploadFile").on("change", function () {
+            fileUrl = this.files[0]
+            fileName = this.files[0].name;
+            filesize = this.files[0].size;
+            convertedFile = ((filesize / 1024).toFixed(2)) + 'Kb'
+            
+            $("#fileName").html(fileName)
+            $("#fileSize").html(convertedFile)
+            $("#uploadBox").hide();
+            $("#uploadedFile").show();
+            $("#modalButton").removeAttr("disabled")
+
+            var reader = new FileReader();
+            fileType = fileName.split('.').pop().toLowerCase()
+            reader.onload = function(e) {
+                $('#uploadedImg').attr('src', e.target.result);
+            };
+            reader.readAsDataURL(this.files[0]);
+        })
+
+        $(".replaceFile").on("click" , function(){
+            $("#fileName").html('')
+            $("#fileSize").html('')
+            $("#uploadBox").show();
+
+            $('#uploadFile').val('');
+            $('#uploadedImg').attr('src', '');
+
+            $("#uploadedFile").hide();
+            $("#modalButton").attr("disabled", true)
+        })
+
+        $('#contactForm').submit(function(event) {
+            event.preventDefault();
+            var formData = $(this).serializeArray();
+            var imageSrc = $('#uploadedImg').attr('src').split(',')[1];
+            
+            formData.push({ name: 'image_data', value: imageSrc });
+            formData.push({ name: 'reference_height', value: Number($(".reference_height").html()) });
+            formData.push({ name: 'image_type', value: fileType });
+
+            var dataObject = {};
+            formData.forEach(function(item) {
+                dataObject[item.name] = item.value;
+            });
+            
+            $.ajax({
+                url: '/calculate_logo_data',
+                headers: {'Access-Control-Allow-Origin': '*'},
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(dataObject),
+                success: function(response) {
+                    if(response){
+                        var modifiedString = response.data.output_image.slice(2, -1);
+                        $('#uploadedImg').attr('src', `data:image/png;base64,${modifiedString}`);
+                        $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2) )
+                        $('#contactForm')[0].reset();
+                        $('#modalButton').prop('disabled', true);
+                        $("#detailModal").modal('hide');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    $("#detailModal").modal('hide');
+                    setTimeout(() => {
+                        var response = xhr.responseJSON; // Assuming the response is in JSON format
+                        if (response && response.error) {
+                            window.alert(response.error);
+                        } else {
+                            window.alert("An error occurred while processing your request.");
+                        }
+                    }, 0);
+                    console.log("AJAX request failed:");
+                    console.log("Status: " + status);
+                    console.log("Error: " + error);
+                }
+            });
+        });
+        
+        var slider = document.getElementById("range");
+        var output = $(".custom-select .text-primary");
+        output.html(slider.value);
+        slider.oninput = function () {
+            output.html(this.value);
+        }
+    </script>
+</body>
+
+</html>

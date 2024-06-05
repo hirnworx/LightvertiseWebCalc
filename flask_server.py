@@ -84,7 +84,7 @@ def define_reference_height(event=None):
         messagebox.showerror("Invalid Input", "Invalid height value. Please enter a valid number.")
 
 # def process_image_thread(filename, reference_height, customer_data):
-def process_image_thread(image, reference_height, customer_data):
+def process_image_thread(image, reference_height, customer_data, save_customer_data):
     # if filename is None:
     #     messagebox.showerror("File Not Found", "Filename is not defined. Make sure a file is selected.")
     #     return
@@ -122,15 +122,16 @@ def process_image_thread(image, reference_height, customer_data):
         # output_text.after(0, lambda: output_text.insert(END, f"\nRail Price: {rail_price}€"))
         # output_text.after(0, lambda: output_text.insert(END, f"\nPrice including Rail: {price_including_rail}€\n"))
 
-        # if connection is not None:
-        calculation_data = {
-            "calculation_data": output_string.split('\n'),
-            "price_without_rail": total_price,
-            "price_with_rail": price_including_rail,
-            "reference_height": reference_height,
-            "output_image": image_data
-        }
-            # insert_calculation_result(connection, calculation_data, customer_data)  # Pass customer_data here
+        if connection is not None:
+            calculation_data = {
+                "calculation_data": output_string.split('\n'),
+                "price_without_rail": total_price,
+                "price_with_rail": price_including_rail,
+                "reference_height": reference_height,
+                "output_image": image_data
+            }
+            if save_customer_data:
+                insert_calculation_result(connection, calculation_data, customer_data)  # Pass customer_data here
 
         return calculation_data, customer_data, rail_price, error
 
@@ -178,7 +179,7 @@ def calculate_logo_data():
         else:
             data = request.json
 
-        print(data)
+        # print(data)
 
         image = request.json['image_data']
         image_type = request.json['image_type']
@@ -192,6 +193,9 @@ def calculate_logo_data():
             "customer_phone": request.json['customer_phone'],
             "customer_email": request.json['customer_email']
         }
+
+        save_customer_data = request.json['save_customer_data']
+        # print('save_customer_data: ', save_customer_data, type(save_customer_data))
 
         # customer_data = {
         #     "customer_name": '',
@@ -218,7 +222,7 @@ def calculate_logo_data():
         image = image.convert('RGB')
         image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-        calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_height, customer_data)
+        calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_height, customer_data, save_customer_data)
 
         # print(customer_data)
 
@@ -245,7 +249,7 @@ def calculate_logo_data():
             results['output_image'] = calculation_data['output_image']
             results['customer_data'] = customer_data
 
-            print("results: ", results)
+            # print("results: ", results)
             
             message = {
                 # 'status': 200,

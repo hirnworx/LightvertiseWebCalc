@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
+<style>
+    .custom-select .text-primary {
+        margin-right: 10px;
+        display: inline-block;
+        border: none;
+        width: 50px;
+    }
+    .custom-select .text-primary:focus,
+    .slidecontainer input:focus{
+        outline: 0;
+    }
+</style>
+
 <body>
     <div class="page-wrapper">
         <nav class="navbar">
@@ -36,7 +49,8 @@
                                                     fill="#23A6F0" />
                                             </svg>
                                             <span class="ml-2 d-inline-block" id="fileName"></span>
-                                            <label for="uploadFile_new" class="ml-1 d-inline-block text-primary mb-0 replaceFile">Datei ersetzen</label>
+                                            <!-- <label for="uploadFile_new" class="ml-1 d-inline-block text-primary mb-0 replaceFile">Datei ersetzen</label> -->
+                                            <label for="uploadFile" class="ml-1 d-inline-block text-primary mb-0 replaceFile">Datei ersetzen</label>
                                             <span class="ml-1 d-inline-block text-right float-right" id="fileSize"></span>
                                         </div>
                                     </div>
@@ -50,38 +64,30 @@
                                         <hr class="my-0">
                                         <ul class="nav nav-tabs" id="tablist" role="tablist">
                                             <li class="nav-item">
-                                                <button class="nav-link active" data-toggle="tab"
-                                                    data-target="#gesamtlänge">Gesamtlänge</button>
+                                                <button class="nav-link active" data-toggle="tab" data-target="#gesamtlänge">Gesamtlänge</button>
                                             </li>
                                             <li class="nav-item">
-                                                <button class="nav-link" data-toggle="tab"
-                                                    data-target="#gesamthöhe">Gesamthöhe</button>
+                                                <button class="nav-link" data-toggle="tab" data-target="#gesamthöhe">Gesamthöhe</button>
                                             </li>
                                             <li class="nav-item">
-                                                <button class="nav-link" id="contact-tab" data-toggle="tab"
-                                                    data-target="#contact">Höchstes Element</button>
+                                                <button class="nav-link" id="contact-tab" data-toggle="tab" data-target="#contact">Höchstes Element</button>
                                             </li>
                                         </ul>
                                         <div class="tab-content" id="tabContent">
                                             <div class="tab-pane fade show active" id="gesamtlänge">
-                                                <div class="mb-20">Gesamtlänge</div>
+                                                <div class="mb-20 targetContent">Gesamtlänge</div>
                                                 <div class="d-flex align-items-center">
                                                     <div class="custom-select">
-                                                        <span class="text-primary reference_height">322</span>
+                                                        <!-- <span class="text-primary reference_height">322</span> -->
+                                                        <input type="number" class="text-primary reference_height" min="15" max="140" value="20">
                                                         <span class="border-left">cm</span>
                                                     </div>
                                                     <div class="slider d-flex">
                                                         <div class="slidecontainer">
-                                                            <input type="range" min="15" max="140" value="20"
-                                                                class="w-100" id="range">
-                                                            <div
-                                                                class="w-100 d-flex justify-content-between slider-text">
-                                                                <span>
-                                                                    15 cm
-                                                                </span>
-                                                                <span>
-                                                                    140 cm
-                                                                </span>
+                                                            <input type="range" min="15" max="140" value="20" class="w-100" id="range">
+                                                            <div class="w-100 d-flex justify-content-between slider-text">
+                                                                <span>15 cm</span>
+                                                                <span>140 cm</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -92,8 +98,8 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
+                                <input type="file"  id="uploadFile" accept="image/png, image/jpeg">
                                 <label class="card custom-card upload-box" for="uploadFile" id="uploadBox">
-                                    <input type="file" hidden id="uploadFile" accept="image/png, image/jpeg">
                                     <div class="card-body">
                                         <div class="inner-content">
                                             <svg width="94" height="94" viewBox="0 0 94 94" fill="none"
@@ -119,6 +125,7 @@
                                             <div class="uploaded-img">
                                                 <!-- <img src="assets/img/upload-logo.png" alt="450" class="img-fluid my-0" id="uploadedImg"> -->
                                                 <img src="" alt="450" class="img-fluid my-0" id="uploadedImg">
+                                                <input type="hidden" class="imageData" value="">
                                             </div>
                                             <div class="text-right">
                                                 <p>Kalkulierter Preis:</p>
@@ -135,7 +142,7 @@
                 <div class="row my-4">
                     <div class="col-12">
                         <div class="text-center">
-                            <button class="btn btn-outline-default btn-lg mr-3" disabled>Preis kalkulieren</button>
+                            <button class="btn btn-outline-default btn-lg mr-3 directPrice" disabled>Preis kalkulieren</button>
                             <button class="btn btn-primary btn-lg" disabled data-toggle="modal"
                                 data-target="#detailModal" id="modalButton">Sofortangebot erhalten</button>
                         </div>
@@ -163,37 +170,37 @@
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="">Firma</label>
-                            <select name="company_name" id="" class="form-control">
-                                <option value="Runourcode GmbH">Runourcode GmbH</option>
+                            <input type="text" name="company_name" id="" class="form-control" value=""/>
                             </select>
                         </div>
                         <div class="form-group">
                             <label for="">Name <span class="text-primary">*</span></label>
-                            <input type="text" name="customer_name" class="form-control" placeholder="David De Matteo">
+                            <input type="text" name="customer_name" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="">E-mail <span class="text-primary">*</span></label>
-                            <input type="email" name="customer_email" class="form-control" placeholder="mail@runourcode.com">
+                            <input type="email" name="customer_email" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="">Telefon<span class="text-primary">*</span></label>
-                            <input type="text" name="customer_phone" class="form-control" placeholder="09101 478930">
+                            <input type="text" name="customer_phone" class="form-control">
                         </div>
                         <div class="form-group">
                             <label for="">Straße<span class="text-primary">*</span></label>
-                            <input type="text" name="customer_street" class="form-control" placeholder="Nürnberger Straße 46">
+                            <input type="text" name="customer_street" class="form-control">
                         </div>
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="">PLZ<span class="text-primary">*</span></label>
-                                    <input type="text" name="customer_zipcode" class="form-control" placeholder="90579">
+                                    <input type="text" name="customer_zipcode" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="form-group">
                                     <label for="">Stadt<span class="text-primary">*</span></label>
-                                    <input type="text" name="customer_city" class="form-control" placeholder="Langenzenn">
+                                    <input type="text" name="customer_city" class="form-control">
+                                    <input type="hidden" class="save_customer_data" value="1">
                                 </div>
                             </div>
                         </div>
@@ -215,22 +222,28 @@
         $("#labelButton").on("click" , function(){
             $("#uploadFile").trigger("click");
         })
-        $("#uploadFile").on("change", function () {
+        $("#uploadFile").on("change", function (event) {
             fileUrl = this.files[0]
             fileName = this.files[0].name;
             filesize = this.files[0].size;
             convertedFile = ((filesize / 1024).toFixed(2)) + 'Kb'
+            
+            var preview = document.getElementById("uploadedImg");
+            var previewImg = document.createElement("img");
+            preview.setAttribute("src", fileName);
             
             $("#fileName").html(fileName)
             $("#fileSize").html(convertedFile)
             $("#uploadBox").hide();
             $("#uploadedFile").show();
             $("#modalButton").removeAttr("disabled")
+            $(".directPrice").removeAttr("disabled")
 
             var reader = new FileReader();
             fileType = fileName.split('.').pop().toLowerCase()
             reader.onload = function(e) {
                 $('#uploadedImg').attr('src', e.target.result);
+                $(".imageData").val(e.target.result)
             };
             reader.readAsDataURL(this.files[0]);
         })
@@ -247,10 +260,26 @@
             $("#modalButton").attr("disabled", true)
         })
 
+        $(".directPrice").click(function(){
+            $(".save_customer_data").val(0)
+            $("#contactForm").trigger("submit");
+        });
+
+        $(".contactFormAction").click(function(){
+            $(".save_customer_data").val(1)
+        })
+
         $('#contactForm').submit(function(event) {
             event.preventDefault();
             var formData = $(this).serializeArray();
             var imageSrc = $('#uploadedImg').attr('src').split(',')[1];
+
+            let save_customer_data = false
+            if(Number($(".save_customer_data").val())){
+                save_customer_data = true;
+                var imageSrc = $('.imageData').val().split(',')[1];
+            }
+            formData.push({ name: 'save_customer_data', value: save_customer_data });
             
             formData.push({ name: 'image_data', value: imageSrc });
             formData.push({ name: 'reference_height', value: Number($(".reference_height").html()) });
@@ -263,6 +292,7 @@
             
             $.ajax({
                 url: '/calculate_logo_data',
+                //url: 'http://192.168.2.200:5000/calculate_logo_data',
                 headers: {'Access-Control-Allow-Origin': '*'},
                 type: 'POST',
                 contentType: 'application/json',
@@ -273,7 +303,12 @@
                         $('#uploadedImg').attr('src', `data:image/png;base64,${modifiedString}`);
                         $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2) )
                         $('#contactForm')[0].reset();
-                        $('#modalButton').prop('disabled', true);
+                        //$('#modalButton').prop('disabled', false);
+                        if(Number($(".save_customer_data").val())){
+                            $('#modalButton').prop('disabled', true);
+                        }else{
+                            $(".directPrice").prop("disabled", true)
+                        }
                         $("#detailModal").modal('hide');
                     }
                 },
@@ -293,13 +328,35 @@
                 }
             });
         });
+
+        $(".nav-item").click(function(){
+            $(".targetContent").html($(this).find(".nav-link").html())
+        });
         
         var slider = document.getElementById("range");
         var output = $(".custom-select .text-primary");
         output.html(slider.value);
+        output.val(slider.value);
         slider.oninput = function () {
             output.html(this.value);
+            output.val(this.value);
         }
+
+        $(".reference_height").on("input", function () {
+            var slider = $("#range");
+            var value = parseInt($(this).val(), 10);
+            if (value >= parseInt(slider.attr("min"), 10) && value <= parseInt(slider.attr("max"), 10)) {
+                slider.val(value);
+                output.html(value);
+            }
+            else {
+                alert("Invalid range. Please enter a value between 15 and 140.");
+                slider.val(20);
+                $(this).val(20);
+                output.html(20);
+            }
+        });
+
     </script>
 </body>
 

@@ -282,7 +282,7 @@
             formData.push({ name: 'save_customer_data', value: save_customer_data });
             
             formData.push({ name: 'image_data', value: imageSrc });
-            formData.push({ name: 'reference_height', value: Number($(".reference_height").html()) });
+            formData.push({ name: 'reference_height', value: Number($(".reference_height").val()) });
             formData.push({ name: 'image_type', value: fileType });
 
             var dataObject = {};

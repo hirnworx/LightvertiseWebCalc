@@ -10,6 +10,15 @@
 </head>
 
 <style>
+    .uploaded-img {
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -webkit-box-align: center;
+        -ms-flex-align: center;
+        align-items: center;
+        margin-top: 40px;
+    }
     .custom-select .text-primary {
         margin-right: 10px;
         display: inline-block;
@@ -20,6 +29,52 @@
     .slidecontainer input:focus{
         outline: 0;
     }
+    div#length {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        margin: auto;
+        text-align: center;
+        width: max-content;
+        padding: 5px 15px;
+        background: #DBDBDB;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #585662;
+        top: 15px;
+    }
+
+    div#width {
+        position: absolute;
+        margin: auto;
+        width: max-content;
+        padding: 5px 15px;
+        background: #DBDBDB;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        color: #585662;
+        transform: rotate(90deg);
+        right: -30px;
+        top: auto;
+        bottom: 50%;
+    }
+    .uploaded-img img {
+        width: calc(100% - 30px);
+        height: 300px;
+        object-fit: contain;
+    }
+    .uploaded{
+        height: 450px;
+    }
+    .uploaded-img{
+        min-height: initial;
+    }
+    .custom-select .text-primary{
+        width: 60px;
+    }
+    .hide { display: none;}
 </style>
 
 <body>
@@ -64,13 +119,13 @@
                                         <hr class="my-0">
                                         <ul class="nav nav-tabs" id="tablist" role="tablist">
                                             <li class="nav-item">
-                                                <button class="nav-link active" data-toggle="tab" data-target="#gesamtlänge">Gesamtlänge</button>
+                                                <button class="nav-link active" data-toggle="tab" data-target="#gesamtlänge" value="1">Gesamtlänge</button>
                                             </li>
                                             <li class="nav-item">
-                                                <button class="nav-link" data-toggle="tab" data-target="#gesamthöhe">Gesamthöhe</button>
+                                                <button class="nav-link" data-toggle="tab" data-target="#gesamthöhe" value="2">Gesamthöhe</button>
                                             </li>
                                             <li class="nav-item">
-                                                <button class="nav-link" id="contact-tab" data-toggle="tab" data-target="#contact">Höchstes Element</button>
+                                                <button class="nav-link" id="contact-tab" data-toggle="tab" data-target="#contact" value="3">Höchstes Element</button>
                                             </li>
                                         </ul>
                                         <div class="tab-content" id="tabContent">
@@ -79,15 +134,15 @@
                                                 <div class="d-flex align-items-center">
                                                     <div class="custom-select">
                                                         <!-- <span class="text-primary reference_height">322</span> -->
-                                                        <input type="number" class="text-primary reference_height" min="15" max="140" value="20">
+                                                        <input type="number" class="text-primary reference_height" min="" max="" value="">
                                                         <span class="border-left">cm</span>
                                                     </div>
                                                     <div class="slider d-flex">
                                                         <div class="slidecontainer">
-                                                            <input type="range" min="15" max="140" value="20" class="w-100" id="range">
+                                                            <input type="range" min="50" max="1000" value="50" class="w-100" id="range">
                                                             <div class="w-100 d-flex justify-content-between slider-text">
-                                                                <span>15 cm</span>
-                                                                <span>140 cm</span>
+                                                                <span id="start_range">50 cm</span>
+                                                                <span id="end_range">1000 cm</span>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -120,7 +175,9 @@
                                     </div>
                                 </label>
                                 <div class="card custom-card uploaded" id="uploadedFile">
-                                    <div class="card-body">
+                                    <div class="card-body position-relative">
+                                        <div id="length" class="hide">Länge: <span class="length">1000 mm</span></div>
+                                        <div id="width" class="hide">Breite: <span class="width">90 mm</span></div>
                                         <div class="inner-content">
                                             <div class="uploaded-img">
                                                 <!-- <img src="assets/img/upload-logo.png" alt="450" class="img-fluid my-0" id="uploadedImg"> -->
@@ -201,6 +258,7 @@
                                     <label for="">Stadt<span class="text-primary">*</span></label>
                                     <input type="text" name="customer_city" class="form-control">
                                     <input type="hidden" class="save_customer_data" value="1">
+                                    <input type="hidden" class="ref_type" value="1">
                                 </div>
                             </div>
                         </div>
@@ -282,8 +340,9 @@
             formData.push({ name: 'save_customer_data', value: save_customer_data });
             
             formData.push({ name: 'image_data', value: imageSrc });
-            formData.push({ name: 'reference_height', value: Number($(".reference_height").val()) });
+            formData.push({ name: 'reference_measure_cm', value: Number($(".reference_height").val()) });
             formData.push({ name: 'image_type', value: fileType });
+            formData.push({name: 'ref_type', value: Number($(".ref_type").val())})
 
             var dataObject = {};
             formData.forEach(function(item) {
@@ -291,8 +350,8 @@
             });
             
             $.ajax({
-                url: '/calculate_logo_data',
-                //url: 'http://192.168.2.200:5000/calculate_logo_data',
+                //url: '/calculate_logo_data',
+                url: 'http://192.168.2.200:5000/calculate_logo_data',
                 headers: {'Access-Control-Allow-Origin': '*'},
                 type: 'POST',
                 contentType: 'application/json',
@@ -302,6 +361,11 @@
                         var modifiedString = response.data.output_image.slice(2, -1);
                         $('#uploadedImg').attr('src', `data:image/png;base64,${modifiedString}`);
                         $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2) )
+                        
+                        $("#length, #width").show();
+                        $(".length").html(response.data.total_height)
+                        $(".width").html(response.data.total_width)
+                        
                         $('#contactForm')[0].reset();
                         //$('#modalButton').prop('disabled', false);
                         if(Number($(".save_customer_data").val())){
@@ -331,14 +395,39 @@
 
         $(".nav-item").click(function(){
             $(".targetContent").html($(this).find(".nav-link").html())
+            if($(this).find(".nav-link").val() == 1){
+                $("#range, .reference_height").prop('min', '50')
+                $("#range, .reference_height").prop('max', '1000')
+                $(".reference_height").val(50);
+                $("#range").val(50);
+                $("#start_range").html("50 cm");
+                $("#end_range").html("1000 cm");
+                $(".ref_type").val(1)
+            }else if($(this).find(".nav-link").val() == 2){
+                $("#range, .reference_height").prop('min', '20');
+                $("#range, .reference_height").prop('max', '250');
+                $("#range").val(20);
+                $(".reference_height").val(20)
+                $("#start_range").html("20 cm");
+                $("#end_range").html("250 cm");                
+                $(".ref_type").val(2)
+            }else if($(this).find(".nav-link").val() == 3){
+                $("#range, .reference_height").prop('min', '20')
+                $("#range, .reference_height").prop('max', '250')
+                $("#range").val(20);
+                $(".reference_height").val(20)
+                $("#start_range").html("20 cm");
+                $("#end_range").html("250 cm");
+                $(".ref_type").val(3)
+            }
         });
         
         var slider = document.getElementById("range");
         var output = $(".custom-select .text-primary");
-        output.html(slider.value);
+        output.attr("value",slider.value);
         output.val(slider.value);
         slider.oninput = function () {
-            output.html(this.value);
+            output.val(this.value);
             output.val(this.value);
         }
 
@@ -347,13 +436,14 @@
             var value = parseInt($(this).val(), 10);
             if (value >= parseInt(slider.attr("min"), 10) && value <= parseInt(slider.attr("max"), 10)) {
                 slider.val(value);
-                output.html(value);
+                output.val(value);
             }
             else {
-                alert("Invalid range. Please enter a value between 15 and 140.");
-                slider.val(20);
-                $(this).val(20);
-                output.html(20);
+                alert("Invalid range. Please enter a value between " + parseInt(slider.attr("min"), 10) + " and " + parseInt(slider.attr("max"), 10));
+                $("#range, .reference_height").prop('min', parseInt(slider.attr("min"), 10))
+                $("#range, .reference_height").prop('max', parseInt(slider.attr("max"), 10))
+                slider.val(parseInt(slider.attr("min"), 10));
+                $(this).val(parseInt(slider.attr("min"), 10));
             }
         });
 

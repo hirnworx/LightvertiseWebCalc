@@ -84,7 +84,9 @@ def define_reference_height(event=None):
         messagebox.showerror("Invalid Input", "Invalid height value. Please enter a valid number.")
 
 # def process_image_thread(filename, reference_height, customer_data):
-def process_image_thread(image, reference_height, customer_data, save_customer_data):
+# def process_image_thread(image, reference_height, customer_data, save_customer_data):
+def process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type):
+
     # if filename is None:
     #     messagebox.showerror("File Not Found", "Filename is not defined. Make sure a file is selected.")
     #     return
@@ -92,7 +94,8 @@ def process_image_thread(image, reference_height, customer_data, save_customer_d
     try:
         calculation_data = rail_price = error = None
 
-        processed_pil_image, output_string = image_processor.process_image(image, reference_height)
+        # processed_pil_image, output_string = image_processor.process_image(image, reference_height)
+        processed_pil_image, output_string = image_processor.process_image(image, reference_measure_cm, ref_type)
 
         # Apply Gaussian Blur
         processed_pil_image = processed_pil_image.filter(ImageFilter.GaussianBlur(radius=0.0))
@@ -127,7 +130,8 @@ def process_image_thread(image, reference_height, customer_data, save_customer_d
                 "calculation_data": output_string.split('\n'),
                 "price_without_rail": total_price,
                 "price_with_rail": price_including_rail,
-                "reference_height": reference_height,
+                # "reference_height": reference_height,
+                "reference_height": reference_measure_cm,
                 "output_image": image_data
             }
             if save_customer_data:
@@ -183,7 +187,10 @@ def calculate_logo_data():
 
         image = request.json['image_data']
         image_type = request.json['image_type']
-        reference_height = float(request.json['reference_height'])
+        # reference_height = float(request.json['reference_height'])
+
+        reference_measure_cm = float(request.json['reference_measure_cm'])
+        ref_type = request.json['ref_type']
         
         customer_data = {
             "customer_name": request.json['customer_name'],
@@ -222,7 +229,8 @@ def calculate_logo_data():
         image = image.convert('RGB')
         image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-        calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_height, customer_data, save_customer_data)
+        # calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_height, customer_data, save_customer_data)
+        calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type)
 
         # print(customer_data)
 

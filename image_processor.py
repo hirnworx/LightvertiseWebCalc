@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw
 
-def process_image(filename, reference_height_cm):
+
+def process_image(filename, reference_measure_cm, ref_type):
     # Read the image
     try:
         img = cv2.imread(filename)
@@ -40,7 +41,20 @@ def process_image(filename, reference_height_cm):
 
     # Draw the signet contour
     draw.rectangle([x, y, x + w, y + h], outline="green", width=2)
-    scaling_factor = reference_height_cm / h
+
+    # scaling_factor = reference_height_cm / h
+
+    if ref_type == 3:  # Reference by height
+        scaling_factor = reference_measure_cm / h
+    elif ref_type == 1:  # Reference by total width
+        total_width_px = max_x - min_x
+        scaling_factor = reference_measure_cm / total_width_px
+    elif ref_type == 2:  # Reference by total height
+        total_height_px = max_y - min_y
+        scaling_factor = reference_measure_cm / total_height_px
+    else:
+        raise ValueError("Invalid reference type")
+    
     output_lines = [f"Signet height: {scaling_factor * h:.2f} cm"]
 
     # Draw and annotate other contours
@@ -68,6 +82,7 @@ def process_image(filename, reference_height_cm):
     offset = 20  # Distance from the image elements to the annotations
     total_width_line_y = max_y + offset
     total_height_line_x = min_x - offset
+
     # Ensure the text is placed within the image boundaries
     total_width_text_y = total_width_line_y + offset if total_width_line_y + offset < img.shape[0] else total_width_line_y - offset
     total_height_text_x = total_height_line_x - offset if total_height_line_x - offset > 0 else total_height_line_x + offset
@@ -82,5 +97,4 @@ def process_image(filename, reference_height_cm):
     processed_pil_image = Image.fromarray(cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR))
 
     return processed_pil_image, '\n'.join(output_lines)
-
 

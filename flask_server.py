@@ -193,6 +193,7 @@ def calculate_logo_data():
         ref_type = request.json['ref_type']
         
         customer_data = {
+            "company_name": request.json['company_name'],
             "customer_name": request.json['customer_name'],
             "customer_street": request.json['customer_street'],
             "customer_city": request.json['customer_city'],

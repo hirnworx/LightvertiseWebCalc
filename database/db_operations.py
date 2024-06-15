@@ -33,6 +33,7 @@ def create_table(connection):
         timestamp DATETIME,
         reference_height FLOAT,
         output_image MEDIUMBLOB,
+        company_name VARCHAR(255),
         customer_name VARCHAR(255),
         customer_street VARCHAR(255),
         customer_city VARCHAR(255),
@@ -61,6 +62,7 @@ def insert_calculation_result(connection, calculation_data, customer_data=None):
     customer_name = customer_street = customer_city = customer_zipcode = customer_phone = customer_email = ""
 
     if customer_data is not None:
+        company_name = customer_data.get("company_name", "")
         customer_name = customer_data.get("customer_name", "")
         customer_street = customer_data.get("customer_street", "")
         customer_city = customer_data.get("customer_city", "")
@@ -76,6 +78,7 @@ def insert_calculation_result(connection, calculation_data, customer_data=None):
         timestamp, 
         reference_height, 
         output_image, 
+        company_name, 
         customer_name, 
         customer_street, 
         customer_city, 
@@ -83,7 +86,7 @@ def insert_calculation_result(connection, calculation_data, customer_data=None):
         customer_phone, 
         customer_email
     )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
     values = (
         json.dumps(calculation_data["calculation_data"]),
@@ -92,6 +95,7 @@ def insert_calculation_result(connection, calculation_data, customer_data=None):
         timestamp,
         calculation_data["reference_height"],
         calculation_data["output_image"],
+        company_name,
         customer_name,
         customer_street,
         customer_city,

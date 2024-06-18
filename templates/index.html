@@ -363,8 +363,10 @@
                         $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2) )
                         
                         $("#length, #width").show();
-                        $(".length").html(response.data.total_height)
-                        $(".width").html(response.data.total_width)
+                        // $(".length").html(response.data.total_height)
+                        // $(".width").html(response.data.total_width)
+                        $(".length").html(response.data.total_width)
+                        $(".width").html(response.data.total_height)
                         
                         $('#contactForm')[0].reset();
                         //$('#modalButton').prop('disabled', false);

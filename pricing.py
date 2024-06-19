@@ -5,19 +5,52 @@ def profile5s(typeheight_cm, upcharge_percent=80):
     typeheight_mm = int(typeheight_cm * 10)
     
     # Define the explicit price points based on height in mm
+
+    # price_points = {
+    #     100: 139,
+    #     251: 169,
+    #     301: 188,
+    #     401: 215,
+    #     501: 250,
+    #     601: 290,
+    #     701: 340,
+    #     801: 400,
+    #     901: 459,
+    #     1001: 459  # Assuming the price does not increase after 1000 mm
+    # }
+
     price_points = {
         100: 139,
-        251: 169,
-        301: 188,
-        401: 215,
-        501: 250,
-        601: 290,
-        701: 340,
-        801: 400,
-        901: 459,
-        1001: 459  # Assuming the price does not increase after 1000 mm
-    }
-    
+        125: 139,
+        150: 139,
+        200: 139,
+        250: 139,
+        300: 169,
+        350: 188,
+        400: 188,
+        450: 215,
+        500: 215,
+        600: 250,
+        700: 290,
+        800: 340,
+        900: 400,
+        1000: 459,
+        1100: 500,
+        1200: 540,
+        1300: 580,
+        1400: 620,
+        1500: 660.,
+        1600: 700,
+        1700: 740,
+        1800: 780,
+        1900: 820,
+        2000: 860,
+        2100: 900,
+        2200: 940,
+        2300: 980,
+        2400: 1020,
+        2501: 1060}
+
     # Find the two closest explicit price points
     lower_bound = max([point for point in price_points.keys() if point <= typeheight_mm])
     upper_bound = min([point for point in price_points.keys() if point > typeheight_mm])

@@ -97,7 +97,7 @@ def process_image(filename, reference_measure_cm, ref_type):
     # Convert back to PIL image to return it for the UI
     processed_pil_image = Image.fromarray(cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR))
 
-    return processed_pil_image, '\n'.join(output_lines)
+    return processed_pil_image, '\n'.join(output_lines), total_width_cm, total_height_cm
 
 
 

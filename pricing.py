@@ -79,3 +79,14 @@ height_in_cm = 69  # Example height in cm
 upcharge_percent = 10  # Example upcharge percent
 price = profile5s(height_in_cm, upcharge_percent)
 print(f"The price for {height_in_cm} cm with {upcharge_percent}% upcharge is {price} Euros.")
+
+MIN_HEIGHT = 20.0  # Example minimum height in cm
+MAX_HEIGHT = 250.0  # Example maximum height in cm
+
+def profile5s(height):
+    # Example pricing function
+    return height * 10  # Example price calculation
+
+def calculate_railprice(total_width):
+    # Example rail price calculation
+    return total_width * 5  # Example rail price calculation

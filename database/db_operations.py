@@ -49,7 +49,7 @@ def create_table(connection):
     except Error as err:
         print(f"Error: '{err}'")
 
-def insert_calculation_result(connection, calculation_data, customer_data=None):
+def insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data=None):
     cursor = connection.cursor()
 
     # Ensure calculation_data is a dictionary with the expected keys
@@ -77,6 +77,8 @@ def insert_calculation_result(connection, calculation_data, customer_data=None):
         price_with_rail, 
         timestamp, 
         reference_height, 
+        total_width, 
+        total_height, 
         output_image, 
         company_name, 
         customer_name, 
@@ -86,7 +88,7 @@ def insert_calculation_result(connection, calculation_data, customer_data=None):
         customer_phone, 
         customer_email
     )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
     values = (
         json.dumps(calculation_data["calculation_data"]),
@@ -94,6 +96,8 @@ def insert_calculation_result(connection, calculation_data, customer_data=None):
         calculation_data["price_with_rail"],
         timestamp,
         calculation_data["reference_height"],
+        total_width, 
+        total_height, 
         calculation_data["output_image"],
         company_name,
         customer_name,

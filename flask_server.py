@@ -95,7 +95,7 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
         calculation_data = rail_price = error = None
 
         # processed_pil_image, output_string = image_processor.process_image(image, reference_height)
-        processed_pil_image, output_string = image_processor.process_image(image, reference_measure_cm, ref_type)
+        processed_pil_image, output_string, total_width, total_height = image_processor.process_image(image, reference_measure_cm, ref_type)
 
         # Apply Gaussian Blur
         processed_pil_image = processed_pil_image.filter(ImageFilter.GaussianBlur(radius=0.0))
@@ -135,7 +135,7 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
                 "output_image": image_data
             }
             if save_customer_data:
-                insert_calculation_result(connection, calculation_data, customer_data)  # Pass customer_data here
+                insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data)  # Pass customer_data here
 
         return calculation_data, customer_data, rail_price, error
 

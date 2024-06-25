@@ -91,6 +91,11 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
         image_data = str(base64.b64encode(img_jpg))
 
         heights = [float(line.split()[2]) for line in output_string.split('\n') if 'Element height' in line]
+        
+        if not heights:
+            error = "No valid element heights found. Please ensure your image has detectable elements."
+            return calculation_data, customer_data, rail_price, error
+
         total_price = sum(profile5s(height) for height in heights)
 
         invalid_heights, height_suggestions = validate_heights(heights)

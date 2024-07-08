@@ -296,6 +296,73 @@
             </div>
         </div>
     </div>
+<!-- ERROR MODAL-->
+
+<div class="modal fade" id="errorModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Leider konnten wir Ihr Logo nicht automatisch kalkulieren. Geben Sie hier Ihre Daten ein und wir rufen Sie an.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <svg width="24" height="26" viewBox="0 0 24 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6.29004L6.00038 18.8695" stroke="#150A33" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M18 18.8701L6.00038 6.29068" stroke="#150A33" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </button>
+            </div>
+            <form id="contactForm" method="POST" action="send_email.php">
+                <div class="modal-body">
+                    <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+                    <div class="form-group">
+                        <label for="">Firma</label>
+                        <input type="text" name="company_name" id="" class="form-control" value=""/>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Name <span class="text-primary">*</span></label>
+                        <input type="text" name="customer_name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="">E-mail <span class="text-primary">*</span></label>
+                        <input type="email" name="customer_email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Telefon<span class="text-primary">*</span></label>
+                        <input type="text" name="customer_phone" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="">Straße<span class="text-primary">*</span></label>
+                        <input type="text" name="customer_street" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="">PLZ<span class="text-primary">*</span></label>
+                                <input type="text" name="customer_zipcode" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label for="">Stadt<span class="text-primary">*</span></label>
+                                <input type="text" name="customer_city" class="form-control" required>
+                                <input type="hidden" class="save_customer_data" value="1">
+                                <input type="hidden" class="ref_type" value="1">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-lg contactFormAction">Sofortangebot erhalten</button>
+                    <p>Ihre persönlichen Daten werden verwendet, um Ihre Bestellung zu bearbeiten, Ihre Erfahrung auf dieser Website zu unterstützen
+                        Website und für andere Zwecke, die in unserer Datenschutzrichtlinie beschrieben sind.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
     <script src="assets/js/jquery-3.7.1.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -409,21 +476,20 @@
                     }
                 },
                 error: function (xhr, status, error) {
-                    $("#detailModal").modal('hide');
-                    setTimeout(() => {
-                        var response = xhr.responseJSON;
-                        if (response && response.error) {
-                            window.alert(response.error);
-                        } else {
-                            window.alert("An error occurred while processing your request.");
-                        }
-                    }, 0);
-                    console.log("AJAX request failed:");
-                    console.log("Status: " + status);
-                    console.log("Error: " + error);
-                    // Re-enable the button in case of error
-                    $("#modalButton").attr("disabled", true);
-                }
+    // Extract error message
+    var errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An error occurred while processing your request.";
+    
+    // Display the error message in the modal
+    $('#errorMessage').text(errorMessage).show();
+
+    // Show the errorModal
+    $('#errorModal').modal('show');
+
+    console.log("AJAX request failed:");
+    console.log("Status: " + status);
+    console.log("Error: " + error);
+}
+
             });
         });
     

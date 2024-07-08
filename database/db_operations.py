@@ -1,5 +1,3 @@
-# db_operations.py
-
 import mysql.connector
 from mysql.connector import Error
 from .db_config import DB_CONFIG
@@ -22,9 +20,9 @@ def create_db_connection():
         return None
 
 def create_table(connection):
-    """Creates a table if it does not exist, for storing calculation results."""
+    """Creates tables if they do not exist."""
     cursor = connection.cursor()
-    create_table_query = """
+    create_calculation_results_table_query = """
     CREATE TABLE IF NOT EXISTS calculation_results (
         id INT AUTO_INCREMENT PRIMARY KEY, 
         calculation_data JSON, 
@@ -40,12 +38,29 @@ def create_table(connection):
         customer_zipcode VARCHAR(10),
         customer_phone VARCHAR(20),
         customer_email VARCHAR(255)
-    )  ENGINE=INNODB;
+    ) ENGINE=INNODB;
     """
+    
+    create_error_form_submissions_table_query = """
+    CREATE TABLE IF NOT EXISTS error_form_submissions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        company_name VARCHAR(255),
+        customer_name VARCHAR(255) NOT NULL,
+        customer_email VARCHAR(255) NOT NULL,
+        customer_phone VARCHAR(255) NOT NULL,
+        customer_street VARCHAR(255) NOT NULL,
+        customer_zipcode VARCHAR(255) NOT NULL,
+        customer_city VARCHAR(255) NOT NULL,
+        error_message TEXT NOT NULL,
+        submission_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=INNODB;
+    """
+    
     try:
-        cursor.execute(create_table_query)
+        cursor.execute(create_calculation_results_table_query)
+        cursor.execute(create_error_form_submissions_table_query)
         connection.commit()
-        print("Table created successfully")
+        print("Tables created successfully")
     except Error as err:
         print(f"Error: '{err}'")
 
@@ -114,6 +129,28 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
         print("Query successful")
     except Error as err:
         print(f"Error: '{err}'")
+
+def insert_error_form_submission(connection, data):
+    try:
+        cursor = connection.cursor()
+        query = """INSERT INTO error_form_submissions 
+                   (company_name, customer_name, customer_email, customer_phone, customer_street, customer_zipcode, customer_city, error_message) 
+                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+        cursor.execute(query, (
+            data['company_name'], 
+            data['customer_name'], 
+            data['customer_email'], 
+            data['customer_phone'], 
+            data['customer_street'], 
+            data['customer_zipcode'], 
+            data['customer_city'], 
+            data['error_message']
+        ))
+        connection.commit()
+        cursor.close()
+    except Error as e:
+        print("Failed to insert record into error_form_submissions table", e)
+        
 
 def close_connection(connection):
     """Closes the database connection."""

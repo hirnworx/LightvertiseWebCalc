@@ -28,6 +28,8 @@
         l[i].q=l[i].q||[];o=e.createElement(a);f=e.getElementsByTagName(a)[0];o.async=1;o.src=d;f.parentNode.insertBefore(o,f);}
         }(window,document,'script','https://cdn.leadinfo.eu/ping.js','leadinfo','LI-6687B41B3D95F'));
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 <style>
     .uploaded-img {
@@ -284,66 +286,73 @@
         </div>
     </div>
 
-    <!-- ERROR MODAL -->
-    <div class="modal fade" id="errorModal">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Leider konnten wir Ihr Logo nicht automatisch kalkulieren. Geben Sie hier Ihre Daten ein und wir rufen Sie an.</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <svg width="24" height="26" viewBox="0 0 24 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M18 6.29004L6.00038 18.8695" stroke="#150A33" stroke-width="1.5" stroke-linecap="round" />
-                            <path d="M18 18.8701L6.00038 6.29068" stroke="#150A33" stroke-width="1.5" stroke-linecap="round" />
-                        </svg>
-                    </button>
-                </div>
-                <form id="errorContactForm">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="error_company_name">Firma</label>
-                            <input type="text" name="company_name" id="error_company_name" class="form-control" />
-                        </div>
-                        <div class="form-group">
-                            <label for="error_customer_name">Name <span class="text-primary">*</span></label>
-                            <input type="text" name="customer_name" id="error_customer_name" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="error_customer_email">E-mail <span class="text-primary">*</span></label>
-                            <input type="email" name="customer_email" id="error_customer_email" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="error_customer_phone">Telefon<span class="text-primary">*</span></label>
-                            <input type="text" name="customer_phone" id="error_customer_phone" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="error_customer_street">Straße<span class="text-primary">*</span></label>
-                            <input type="text" name="customer_street" id="error_customer_street" class="form-control" required>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label for="error_customer_zipcode">PLZ<span class="text-primary">*</span></label>
-                                    <input type="text" name="customer_zipcode" id="error_customer_zipcode" class="form-control" required>
-                                </div>
-                            </div>
-                            <div class="col-md-9">
-                                <div class="form-group">
-                                    <label for="error_customer_city">Stadt<span class="text-primary">*</span></label>
-                                    <input type="text" name="customer_city" id="error_customer_city" class="form-control" required>
-                                </div>
-                            </div>
-                        </div>
-                        <input type="hidden" name="error_message" id="error_message">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary btn-lg">Sofortangebot erhalten</button>
-                        <p>Ihre persönlichen Daten werden verwendet, um Ihre Bestellung zu bearbeiten, Ihre Erfahrung auf dieser Website zu unterstützen
-                            Website und für andere Zwecke, die in unserer Datenschutzrichtlinie beschrieben sind.</p>
-                    </div>
-                </form>
+<!-- ERROR MODAL -->
+<div class="modal fade" id="errorModal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Leider konnten wir Ihr Logo nicht automatisch kalkulieren. Geben Sie hier Ihre Daten ein und wir rufen Sie an.</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <svg width="24" height="26" viewBox="0 0 24 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 6.29004L6.00038 18.8695" stroke="#150A33" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M18 18.8701L6.00038 6.29068" stroke="#150A33" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </button>
             </div>
+            <!-- Placeholder for the alert message -->
+            <div class="alert alert-danger" role="alert" id="errorAlert" style="display: none;"></div>
+            <form id="errorContactForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="error_company_name">Firma</label>
+                        <input type="text" name="company_name" id="error_company_name" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="error_customer_name">Name <span class="text-primary">*</span></label>
+                        <input type="text" name="customer_name" id="error_customer_name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="error_customer_email">E-mail <span class="text-primary">*</span></label>
+                        <input type="email" name="customer_email" id="error_customer_email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="error_customer_phone">Telefon<span class="text-primary">*</span></label>
+                        <input type="text" name="customer_phone" id="error_customer_phone" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="error_customer_street">Straße<span class="text-primary">*</span></label>
+                        <input type="text" name="customer_street" id="error_customer_street" class="form-control" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="error_customer_zipcode">PLZ<span class="text-primary">*</span></label>
+                                <input type="text" name="customer_zipcode" id="error_customer_zipcode" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label for="error_customer_city">Stadt<span class="text-primary">*</span></label>
+                                <input type="text" name="customer_city" id="error_customer_city" class="form-control" required>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="error_message" id="error_message">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-lg">Anfrage Absenden</button>
+                    <p>Ihre persönlichen Daten werden verwendet, um Ihre Bestellung zu bearbeiten, Ihre Erfahrung auf dieser Website zu unterstützen
+                        Website und für andere Zwecke, die in unserer Datenschutzrichtlinie beschrieben sind.</p>
+                </div>
+            </form>
         </div>
     </div>
+</div>
+
+
+
+
+    
 
     <script src="assets/js/jquery-3.7.1.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
@@ -404,64 +413,72 @@
         });
 
         $('#contactForm').submit(function (event) {
-            event.preventDefault();
-            let formData = $(this).serializeArray();
-            let imageSrc = $('#uploadedImg').attr('src').split(',')[1];
+    event.preventDefault();
+    let formData = $(this).serializeArray();
+    let imageSrc = $('#uploadedImg').attr('src').split(',')[1];
 
-            let save_customer_data = false;
-            if (Number($(".save_customer_data").val())) {
-                save_customer_data = true;
-                imageSrc = $('.imageData').val().split(',')[1];
-            }
-            formData.push({ name: 'save_customer_data', value: save_customer_data });
-            formData.push({ name: 'image_data', value: imageSrc });
-            formData.push({ name: 'reference_measure_cm', value: Number($(".reference_height").val()) });
-            formData.push({ name: 'image_type', value: fileType });
-            formData.push({ name: 'ref_type', value: Number($(".ref_type").val()) });
+    let save_customer_data = false;
+    if (Number($(".save_customer_data").val())) {
+        save_customer_data = true;
+        imageSrc = $('.imageData').val().split(',')[1];
+    }
+    formData.push({ name: 'save_customer_data', value: save_customer_data });
+    formData.push({ name: 'image_data', value: imageSrc });
+    formData.push({ name: 'reference_measure_cm', value: Number($(".reference_height").val()) });
+    formData.push({ name: 'image_type', value: fileType });
+    formData.push({ name: 'ref_type', value: Number($(".ref_type").val()) });
 
-            let dataObject = {};
-            formData.forEach(function (item) {
-                dataObject[item.name] = item.value;
-            });
+    let dataObject = {};
+    formData.forEach(function (item) {
+        dataObject[item.name] = item.value;
+    });
 
-            $.ajax({
-                url: '/calculate_logo_data',
-                headers: { 'Access-Control-Allow-Origin': '*' },
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(dataObject),
-                success: function (response) {
-                    if (response) {
-                        var modifiedString = response.data.output_image.slice(2, -1);
-                        $('#uploadedImg').attr('src', `data:image/png;base64,${modifiedString}`);
-                        $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2));
+    $.ajax({
+        url: '/calculate_logo_data',
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(dataObject),
+        success: function (response) {
+            if (response) {
+                var modifiedString = response.data.output_image.slice(2, -1);
+                $('#uploadedImg').attr('src', `data:image/png;base64,${modifiedString}`);
+                $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2));
 
-                        $("#length, #width").show();
-                        $(".length").html(response.data.total_width);
-                        $(".width").html(response.data.total_height);
+                $("#length, #width").show();
+                $(".length").html(response.data.total_width);
+                $(".width").html(response.data.total_height);
 
-                        $('#contactForm')[0].reset();
-                        if (Number($(".save_customer_data").val())) {
-                            $('#modalButton').prop('disabled', true);
-                        } else {
-                            $(".directPrice").prop("disabled", true);
-                        }
-                        $("#detailModal").modal('hide');
-
-                        priceCalculated = true;
-                        $("#modalButton").attr("disabled", false);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    var errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An error occurred while processing your request.";
-                    $('#errorMessage').text(errorMessage).show();
-                    $('#errorModal').modal('show');
-                    console.log("AJAX request failed:");
-                    console.log("Status: " + status);
-                    console.log("Error: " + error);
+                $('#contactForm')[0].reset();
+                if (Number($(".save_customer_data").val())) {
+                    $('#modalButton').prop('disabled', true);
+                } else {
+                    $(".directPrice").prop("disabled", true);
                 }
-            });
-        });
+                $("#detailModal").modal('hide');
+
+                priceCalculated = true;
+                $("#modalButton").attr("disabled", false);
+            }
+        },
+        error: function (xhr, status, error) {
+            // Extract error message
+            var errorMessage = xhr.responseJSON && xhr.responseJSON.error ? xhr.responseJSON.error : "An error occurred while processing your request.";
+            
+            // Set the error message in the alert
+            $('#errorAlert').text(errorMessage).show();
+
+            // Show the errorModal
+            $('#errorModal').modal('show');
+
+            console.log("AJAX request failed:");
+            console.log("Status: " + status);
+            console.log("Error: " + error);
+        }
+    });
+});
+
+
 
         $(".nav-item").click(function () {
             $(".targetContent").html($(this).find(".nav-link").html());
@@ -524,16 +541,24 @@
             });
 
             $.ajax({
-                url: '/send_email',
+                url: '/save_error_data',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify(errorDataObject),
                 success: function (response) {
-                    alert('Email sent successfully!');
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Erfolgreich übermittelt',
+                        text: 'Ihre Daten wurden erfolgreich gespeichert.'
+                    });
                     $('#errorModal').modal('hide');
                 },
                 error: function (xhr, status, error) {
-                    alert('Failed to send email.');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Fehler',
+                        text: 'Daten konnten nicht gespeichert werden. Bitte versuchen Sie es erneut.'
+                    });
                     console.log("AJAX request failed:");
                     console.log("Status: " + status);
                     console.log("Error: " + error);

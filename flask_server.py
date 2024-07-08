@@ -12,10 +12,9 @@ import cv2
 import image_processor
 import vector_to_jpeg
 from pricing import profile5s, calculate_railprice
-from database.db_operations import create_db_connection, create_table, insert_calculation_result
+from database.db_operations import create_db_connection, create_table, insert_calculation_result, insert_error_form_submission
 from validator import validate_heights, validate_dimensions
 from flask_cors import CORS
-from send_email import send_email  # Import the send_email function
 
 app = Flask(__name__)
 CORS(app)
@@ -23,7 +22,7 @@ CORS(app)
 # Initialize filename as None
 filename = None
 
-# Establish a database connection and create a table
+# Establish a database connection and create tables
 connection = create_db_connection()
 if connection is not None:
     create_table(connection)
@@ -261,24 +260,15 @@ def calculate_logo_data():
         resp.status_code = 500
         return resp
 
-@app.route('/send_email', methods=['POST'])
-def send_email_endpoint():
+@app.route('/save_error_data', methods=['POST'])
+def save_error_data():
     try:
         data = request.json
-        send_email(
-            data['company_name'],
-            data['customer_name'],
-            data['customer_email'],
-            data['customer_phone'],
-            data['customer_street'],
-            data['customer_zipcode'],
-            data['customer_city'],
-            data.get('error_message', '')  # Optional error message
-        )
-        return jsonify({"message": "Email sent successfully."}), 200
+        insert_error_form_submission(connection, data)
+        return jsonify({"message": "Data saved successfully."}), 200
     except Exception as e:
-        print(f"Failed to send email: {e}")
-        return jsonify({"message": "Failed to send email."}), 500
+        print(f"Failed to save data: {e}")
+        return jsonify({"message": "Failed to save data."}), 500
 
 @app.route('/assets/<path:path>')
 def send_asset(path):

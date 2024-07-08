@@ -33,13 +33,17 @@ def send_email(company_name, customer_name, customer_email, customer_phone, cust
     
     try:
         # Connect to the custom SMTP server
-        server = smtplib.SMTP('lightvertise.de', 25)  # Replace with your SMTP server and port
+        server = smtplib.SMTP('smtp.lightvertise.de', 25)  # Adjusted SMTP server and port
         server.starttls()
         server.login(from_email, 'WKCdnPaRHirnworx92@')  # Use your SMTP server login credentials
         server.sendmail(from_email, to_email, msg.as_string())
         server.quit()
-        print("Email sent successfully!")
-    except Exception as e:
+        print("Anfrage wurde erfolgreich gesendet!")
+    except smtplib.SMTPAuthenticationError:
+        print("Failed to send email: SMTP Authentication Error")
+    except smtplib.SMTPConnectError:
+        print("Failed to send email: SMTP Connection Error")
+    except smtplib.SMTPException as e:
         print(f"Failed to send email: {e}")
 
 if __name__ == "__main__":

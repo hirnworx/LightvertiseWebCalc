@@ -15,6 +15,8 @@ from pricing import profile5s, calculate_railprice
 from database.db_operations import create_db_connection, create_table, insert_calculation_result, close_connection
 from validator import validate_heights, validate_dimensions
 from flask_cors import CORS
+from flask_mail import Mail, Message
+
 
 app = Flask(__name__)
 CORS(app)
@@ -259,6 +261,40 @@ def calculate_logo_data():
         resp = jsonify(message)
         resp.status_code = 500
         return resp
+
+@app.route('/send_email', methods=['POST'])
+def forward_to_email():
+    try:
+        # Extract form data
+        data = request.form
+        company_name = data.get('company_name')
+        customer_name = data.get('customer_name')
+        customer_email = data.get('customer_email')
+        customer_phone = data.get('customer_phone')
+        customer_street = data.get('customer_street')
+        customer_zipcode = data.get('customer_zipcode')
+        customer_city = data.get('customer_city')
+
+        # Full path to the Python executable
+        python_executable = "/usr/bin/python3"  # Update this with the path to your Python executable
+
+        # Run the send_email.py script with the form data
+        command = [
+            python_executable, "send_email.py",
+            f"--company_name={company_name}",
+            f"--customer_name={customer_name}",
+            f"--customer_email={customer_email}",
+            f"--customer_phone={customer_phone}",
+            f"--customer_street={customer_street}",
+            f"--customer_zipcode={customer_zipcode}",
+            f"--customer_city={customer_city}"
+        ]
+
+        subprocess.run(command, check=True)
+        return jsonify({'message': 'Email sent successfully!'}), 200
+    except subprocess.CalledProcessError as e:
+        print(e)
+        return jsonify({'message': 'Failed to send email.'}), 500
 
 @app.route('/assets/<path:path>')
 def send_asset(path):

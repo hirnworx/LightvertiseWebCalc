@@ -190,7 +190,7 @@ def calculate_logo_data():
             image = Image.open(io.BytesIO(base64_decoded))
         
         if image.width < 350:
-            raise ValueError("Uploaded logo must be at least 350px wide.")
+            raise ValueError("Das hochgeladene Logo muss mindestens 350 Pixel breit sein.")
         
         if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
             background = Image.new(image.mode[:-1], image.size, (255, 255, 255))

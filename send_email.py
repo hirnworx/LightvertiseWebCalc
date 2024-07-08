@@ -32,19 +32,23 @@ def send_email(company_name, customer_name, customer_email, customer_phone, cust
     msg.attach(MIMEText(body, 'html'))
     
     try:
-        # Connect to the custom SMTP server
+        print("Connecting to SMTP server...")
         server = smtplib.SMTP('smtp.lightvertise.de', 25)  # Adjusted SMTP server and port
         server.starttls()
+        print("Logging into SMTP server...")
         server.login(from_email, 'WKCdnPaRHirnworx92@')  # Use your SMTP server login credentials
+        print("Sending email...")
         server.sendmail(from_email, to_email, msg.as_string())
         server.quit()
-        print("Anfrage wurde erfolgreich gesendet!")
-    except smtplib.SMTPAuthenticationError:
-        print("Failed to send email: SMTP Authentication Error")
-    except smtplib.SMTPConnectError:
-        print("Failed to send email: SMTP Connection Error")
+        print("Email sent successfully!")
+    except smtplib.SMTPAuthenticationError as e:
+        print("Failed to send email: SMTP Authentication Error", e)
+    except smtplib.SMTPConnectError as e:
+        print("Failed to send email: SMTP Connection Error", e)
     except smtplib.SMTPException as e:
         print(f"Failed to send email: {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

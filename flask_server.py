@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, send_from_directory, render_template
-import threading
 import subprocess
 import os
 import io
@@ -19,9 +18,6 @@ from send_email import send_email  # Import the send_email function
 
 app = Flask(__name__)
 CORS(app)
-
-# Set SendGrid API Key directly
-os.environ['SENDGRID_API_KEY'] = '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'
 
 # Initialize filename as None
 filename = None
@@ -95,7 +91,7 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
         image_data = str(base64.b64encode(img_jpg))
 
         heights = [float(line.split()[2]) for line in output_string.split('\n') if 'Element height' in line]
-        
+
         if not heights:
             error = "No valid element heights found. Please ensure your image has detectable elements."
             return calculation_data, customer_data, rail_price, error
@@ -115,7 +111,6 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
             return calculation_data, customer_data, rail_price, error
 
         rail_price = calculate_railprice(total_width)
-        
         price_including_rail = total_price + rail_price
 
         if connection is not None:
@@ -145,19 +140,7 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
 
         return calculation_data, customer_data, rail_price, error
 
-def update_image_label(tk_image):
-    image_label.config(image=tk_image)
-    image_label.image = tk_image
-    max_width = 300
-
-def reset_fields(event=None):
-    global filename
-    filename_label.config(text="No file selected")
-    height_entry.delete(0, tk.END)
-    output_text.delete('1.0', END)
-    image_label.config(image=None)
-
-@app.route('/calculate_logo_data',methods=['POST'])
+@app.route('/calculate_logo_data', methods=['POST'])
 def calculate_logo_data():
     try:
         results = {}
@@ -171,7 +154,7 @@ def calculate_logo_data():
         image_type = request.json['image_type']
         reference_measure_cm = float(request.json['reference_measure_cm'])
         ref_type = request.json['ref_type']
-        
+
         customer_data = {
             "company_name": request.json['company_name'],
             "customer_name": request.json['customer_name'],
@@ -185,17 +168,17 @@ def calculate_logo_data():
         save_customer_data = request.json['save_customer_data']
 
         base64_decoded = base64.b64decode(image)
-        
+
         if image_type.lower() in ['jpg', 'jpeg', 'png']:
             image = Image.open(io.BytesIO(base64_decoded))
         else:
             jpeg_base64 = vector_to_jpeg.convert_base64_to_jpeg(image, image_type)
             base64_decoded = base64.b64decode(jpeg_base64)
             image = Image.open(io.BytesIO(base64_decoded))
-        
+
         if image.width < 350:
             raise ValueError("Uploaded logo must be at least 350px wide.")
-        
+
         if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
             background = Image.new(image.mode[:-1], image.size, (255, 255, 255))
             background.paste(image, image.split()[-1])
@@ -224,7 +207,7 @@ def calculate_logo_data():
             results['rail_price'] = rail_price
             results['output_image'] = calculation_data['output_image']
             results['customer_data'] = customer_data
-            
+
             message = {
                 'error': None,
                 'data': results
@@ -268,6 +251,7 @@ def calculate_logo_data():
 def send_email_endpoint():
     try:
         data = request.json
+        error_message = data.get('error_message', 'No error message provided')
         send_email(
             data['company_name'],
             data['customer_name'],
@@ -275,18 +259,20 @@ def send_email_endpoint():
             data['customer_phone'],
             data['customer_street'],
             data['customer_zipcode'],
-            data['customer_city']
+            data['customer_city'],
+            error_message  # Pass the error_message parameter
         )
         return jsonify({"message": "Email sent successfully."}), 200
     except Exception as e:
         print(f"Failed to send email: {e}")
         return jsonify({"message": "Failed to send email."}), 500
 
+
 @app.route('/assets/<path:path>')
 def send_asset(path):
     return send_from_directory('assets', path)
 
-@app.route('/', methods=["GET","POST"])
+@app.route('/', methods=["GET", "POST"])
 def html():
     return render_template('index.html')
 

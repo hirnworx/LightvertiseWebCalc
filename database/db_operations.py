@@ -1,26 +1,33 @@
 import mysql.connector
-from mysql.connector import Error
+from mysql.connector import Error, pooling
 from .db_config import DB_CONFIG
 import json
 from datetime import datetime
 
-def create_db_connection():
-    """Establishes a database connection using the credentials defined in db_config.py."""
+# Create a connection pool
+connection_pool = mysql.connector.pooling.MySQLConnectionPool(
+    pool_name="mypool",
+    pool_size=5,
+    **DB_CONFIG
+)
+
+def get_connection():
+    """Get a connection from the pool"""
     try:
-        connection = mysql.connector.connect(
-            host=DB_CONFIG["host"],
-            user=DB_CONFIG["user"],
-            password=DB_CONFIG["password"],
-            database=DB_CONFIG["database"]
-        )
-        print("MySQL Database connection successful")
-        return connection
+        connection = connection_pool.get_connection()
+        if connection.is_connected():
+            return connection
     except Error as err:
         print(f"Error: '{err}'")
-        return None
+    return None
 
-def create_table(connection):
+def create_table():
     """Creates tables if they do not exist."""
+    connection = get_connection()
+    if connection is None:
+        print("Failed to get connection from pool.")
+        return
+
     cursor = connection.cursor()
     create_calculation_results_table_query = """
     CREATE TABLE IF NOT EXISTS calculation_results (
@@ -63,8 +70,16 @@ def create_table(connection):
         print("Tables created successfully")
     except Error as err:
         print(f"Error: '{err}'")
+    finally:
+        cursor.close()
+        connection.close()
 
-def insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data=None):
+def insert_calculation_result(calculation_data, total_width, total_height, customer_data=None):
+    connection = get_connection()
+    if connection is None:
+        print("Failed to get connection from pool.")
+        return
+
     cursor = connection.cursor()
 
     # Ensure calculation_data is a dictionary with the expected keys
@@ -74,16 +89,13 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
 
     timestamp = datetime.now()
 
-    customer_name = customer_street = customer_city = customer_zipcode = customer_phone = customer_email = ""
-
-    if customer_data is not None:
-        company_name = customer_data.get("company_name", "")
-        customer_name = customer_data.get("customer_name", "")
-        customer_street = customer_data.get("customer_street", "")
-        customer_city = customer_data.get("customer_city", "")
-        customer_zipcode = customer_data.get("customer_zipcode", "")
-        customer_phone = customer_data.get("customer_phone", "")
-        customer_email = customer_data.get("customer_email", "")
+    company_name = customer_data.get("company_name", "") if customer_data else ""
+    customer_name = customer_data.get("customer_name", "") if customer_data else ""
+    customer_street = customer_data.get("customer_street", "") if customer_data else ""
+    customer_city = customer_data.get("customer_city", "") if customer_data else ""
+    customer_zipcode = customer_data.get("customer_zipcode", "") if customer_data else ""
+    customer_phone = customer_data.get("customer_phone", "") if customer_data else ""
+    customer_email = customer_data.get("customer_email", "") if customer_data else ""
 
     insert_query = """
     INSERT INTO calculation_results (
@@ -129,8 +141,16 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
         print("Query successful")
     except Error as err:
         print(f"Error: '{err}'")
+    finally:
+        cursor.close()
+        connection.close()
 
-def insert_error_form_submission(connection, data):
+def insert_error_form_submission(data):
+    connection = get_connection()
+    if connection is None:
+        print("Failed to get connection from pool.")
+        return
+
     try:
         cursor = connection.cursor()
         query = """INSERT INTO error_form_submissions 
@@ -150,7 +170,8 @@ def insert_error_form_submission(connection, data):
         cursor.close()
     except Error as e:
         print("Failed to insert record into error_form_submissions table", e)
-        
+    finally:
+        connection.close()
 
 def close_connection(connection):
     """Closes the database connection."""

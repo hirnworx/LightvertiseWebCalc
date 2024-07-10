@@ -80,11 +80,11 @@ def define_reference_height(event=None):
         threading.Thread(target=process_image_thread, args=(filename, reference_height, customer_data), daemon=True).start()
 
     except ValueError:
-        messagebox.showerror("Invalid Input", "Invalid height value. Please enter a valid number.")
+        messagebox.showerror("Ungültige Eingabe", "Ungültiger Höhenwert. Bitte geben Sie eine gültige Nummer ein.")
 
 def process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type):
+    calculation_data = rail_price = error = None
     try:
-        calculation_data = rail_price = error = None
         processed_pil_image, output_string, total_width, total_height = image_processor.process_image(image, reference_measure_cm, ref_type)
         processed_pil_image = processed_pil_image.filter(ImageFilter.GaussianBlur(radius=0.0))
         _, img_jpg = cv2.imencode('.jpg', cv2.cvtColor(np.array(processed_pil_image), cv2.COLOR_RGB2BGR))
@@ -93,37 +93,37 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
         heights = [float(line.split()[2]) for line in output_string.split('\n') if 'Element height' in line]
         
         if not heights:
-            error = "No valid element heights found. Please ensure your image has detectable elements."
+            error = "Keine gültigen Elementhöhen gefunden. Bitte stellen Sie sicher, dass Ihr Bild erkennbare Elemente enthält."
             return calculation_data, customer_data, rail_price, error
 
         total_price = sum(profile5s(height) for height in heights)
 
         invalid_heights, height_suggestions = validate_heights(heights)
         if invalid_heights:
-            error = f"Ungültige Buchstabengröße: {invalid_heights}. Wir können Buchstaben von {height_suggestions['min_height']} cm bis {height_suggestions['max_height']} cm produzieren, Bitte passen Sie ihre Gesamtabmessung entsprechend an."
+            error = f"Ungültige Buchstabengröße: {invalid_heights}. Wir können Buchstaben von {height_suggestions['min_height']} cm bis {height_suggestions['max_height']} cm produzieren. Bitte passen Sie Ihre Gesamtabmessung entsprechend an."
             return calculation_data, customer_data, rail_price, error
 
         width_valid, width_suggestions = validate_dimensions(total_width)
         if not width_valid:
-            error = (f"Invalid total width: {total_width} cm. "
-                     f"Valid range is {width_suggestions['min_width']} cm to {width_suggestions['max_width']} cm. "
-                     f"Please adjust the height of your elements to fit within this range.")
+            error = (f"Ungültige Gesamtbreite: {total_width} cm. "
+                     f"Gültiger Bereich ist {width_suggestions['min_width']} cm bis {width_suggestions['max_width']} cm. "
+                     f"Bitte passen Sie die Höhe Ihrer Elemente an, um innerhalb dieses Bereichs zu bleiben.")
             return calculation_data, customer_data, rail_price, error
 
         rail_price = calculate_railprice(total_width)
         
         price_including_rail = total_price + rail_price
 
-        if connection is not None:
-            calculation_data = {
-                "calculation_data": output_string.split('\n'),
-                "price_without_rail": total_price,
-                "price_with_rail": price_including_rail,
-                "reference_height": reference_measure_cm,
-                "output_image": image_data
-            }
-            if save_customer_data:
-                insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data)
+        calculation_data = {
+            "calculation_data": output_string.split('\n'),
+            "price_without_rail": total_price,
+            "price_with_rail": price_including_rail,
+            "reference_height": reference_measure_cm,
+            "output_image": image_data
+        }
+
+        if connection is not None and save_customer_data:
+            insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data)
 
         return calculation_data, customer_data, rail_price, error
 
@@ -131,10 +131,10 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
         error = traceback.format_exc()
         print("\n")
         print("------------------------------------------------")
-        print("   ERROR:- " + str(ex))
+        print("   FEHLER:- " + str(ex))
         print("------------------------------------------------")
         print("\n")
-        print("---------------- Error traceback ---------------")
+        print("---------------- Fehler-Traceback ---------------")
         print(error)
         print("------------------------------------------------")
         print("\n")
@@ -148,7 +148,7 @@ def update_image_label(tk_image):
 
 def reset_fields(event=None):
     global filename
-    filename_label.config(text="No file selected")
+    filename_label.config(text="Keine Datei ausgewählt")
     height_entry.delete(0, tk.END)
     output_text.delete('1.0', END)
     image_label.config(image=None)
@@ -201,7 +201,7 @@ def calculate_logo_data():
 
         calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type)
 
-        if error is None:
+        if error is None and calculation_data is not None:
             results['element_heights'] = []
 
             for element_data in calculation_data['calculation_data']:
@@ -233,6 +233,8 @@ def calculate_logo_data():
             return resp
 
         else:
+            if error is None:
+                error = "Ein unbekannter Fehler ist aufgetreten."
             message = {
                 'error': error,
                 'data': results
@@ -244,10 +246,10 @@ def calculate_logo_data():
     except Exception as ex:
         print("\n")
         print("------------------------------------------------")
-        print("   ERROR:- " + str(ex))
+        print("   FEHLER:- " + str(ex))
         print("------------------------------------------------")
         print("\n")
-        print("---------------- Error traceback ---------------")
+        print("---------------- Fehler-Traceback ---------------")
         print(traceback.format_exc())
         print("------------------------------------------------")
         print("\n")
@@ -265,10 +267,10 @@ def save_error_data():
     try:
         data = request.json
         insert_error_form_submission(connection, data)
-        return jsonify({"message": "Data saved successfully."}), 200
+        return jsonify({"message": "Daten erfolgreich gespeichert."}), 200
     except Exception as e:
-        print(f"Failed to save data: {e}")
-        return jsonify({"message": "Failed to save data."}), 500
+        print(f"Fehler beim Speichern der Daten: {e}")
+        return jsonify({"message": "Fehler beim Speichern der Daten."}), 500
 
 @app.route('/assets/<path:path>')
 def send_asset(path):

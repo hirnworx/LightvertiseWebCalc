@@ -40,8 +40,8 @@ def upload_action(event=None):
 
     if filename.lower().endswith(('.jpg', '.jpeg', '.png')):
         image = Image.open(filename)
-        if image.width < 350:
-            messagebox.showerror("Bitte laden Sie ein größeres Bild hoch", "Das Bild muss mindestens 350px in der Breite haben.")
+        if image.width < 250:
+            messagebox.showerror("Bitte laden Sie ein größeres Bild hoch", "Das Bild muss mindestens 250px in der Breite haben.")
             return
         process_and_display_image(image)
     elif filename.lower().endswith(('.svg', '.pdf', '.ai')):
@@ -50,7 +50,7 @@ def upload_action(event=None):
         if os.path.exists(output_path):
             image = Image.open(output_path)
             if image.width < 350:
-                messagebox.showerror("Bitte laden Sie ein größeres Bild hoch", "Das Bild muss mindestens 350px in der Breite haben.")
+                messagebox.showerror("Bitte laden Sie ein größeres Bild hoch", "Das Bild muss mindestens 250px in der Breite haben.")
                 return
             process_and_display_image(image)
 
@@ -82,10 +82,20 @@ def define_reference_height(event=None):
     except ValueError:
         messagebox.showerror("Ungültige Eingabe", "Ungültiger Höhenwert. Bitte geben Sie eine gültige Nummer ein.")
 
+import traceback
+from PIL import ImageFilter
+import base64
+import cv2
+import numpy as np
+from image_processor import process_image
+from database.db_operations import insert_calculation_result
+from pricing import profile5s, calculate_railprice
+from validator import validate_heights, validate_dimensions
+
 def process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type):
     calculation_data = rail_price = error = None
     try:
-        processed_pil_image, output_string, total_width, total_height = image_processor.process_image(image, reference_measure_cm, ref_type)
+        processed_pil_image, output_string, total_width, total_height, invalid_heights = process_image(image, reference_measure_cm, ref_type)
         processed_pil_image = processed_pil_image.filter(ImageFilter.GaussianBlur(radius=0.0))
         _, img_jpg = cv2.imencode('.jpg', cv2.cvtColor(np.array(processed_pil_image), cv2.COLOR_RGB2BGR))
         image_data = str(base64.b64encode(img_jpg))
@@ -96,12 +106,12 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
             error = "Keine gültigen Elementhöhen gefunden. Bitte stellen Sie sicher, dass Ihr Bild erkennbare Elemente enthält."
             return calculation_data, customer_data, rail_price, error
 
-        total_price = sum(profile5s(height) for height in heights)
-
-        invalid_heights, height_suggestions = validate_heights(heights)
         if invalid_heights:
-            error = f"Ungültige Buchstabengröße: {invalid_heights}. Wir können Buchstaben von {height_suggestions['min_height']} cm bis {height_suggestions['max_height']} cm produzieren. Bitte passen Sie Ihre Gesamtabmessung entsprechend an."
+            invalid_heights_str = ', '.join(f"{height:.2f} cm" for height in invalid_heights)
+            error = f"Leider sind einige Elemente in Ihrem Logo zu klein um Sie als Leuchtbuchstaben zu produzieren. Hier die Elemente von links nach rechts: {invalid_heights_str})."
             return calculation_data, customer_data, rail_price, error
+
+        total_price = sum(profile5s(height) for height in heights)
 
         width_valid, width_suggestions = validate_dimensions(total_width)
         if not width_valid:
@@ -127,19 +137,29 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
 
         return calculation_data, customer_data, rail_price, error
 
+    except ValueError as ex:
+        # Handle specific known errors
+        error = str(ex)
     except Exception as ex:
-        error = traceback.format_exc()
+        # Handle any other unexpected errors
+        error = "Es gab ein Problem bei der Verarbeitung Ihres Bildes. Bitte stellen Sie sicher, dass Ihr Bild die richtigen Anforderungen erfüllt."
         print("\n")
         print("------------------------------------------------")
         print("   FEHLER:- " + str(ex))
         print("------------------------------------------------")
         print("\n")
         print("---------------- Fehler-Traceback ---------------")
-        print(error)
+        print(traceback.format_exc())
         print("------------------------------------------------")
         print("\n")
 
-        return calculation_data, customer_data, rail_price, error
+    return calculation_data, customer_data, rail_price, error
+
+
+
+
+
+
 
 def update_image_label(tk_image):
     image_label.config(image=tk_image)
@@ -152,6 +172,7 @@ def reset_fields(event=None):
     height_entry.delete(0, tk.END)
     output_text.delete('1.0', END)
     image_label.config(image=None)
+
 
 @app.route('/calculate_logo_data',methods=['POST'])
 def calculate_logo_data():
@@ -189,8 +210,8 @@ def calculate_logo_data():
             base64_decoded = base64.b64decode(jpeg_base64)
             image = Image.open(io.BytesIO(base64_decoded))
         
-        if image.width < 350:
-            raise ValueError("Das hochgeladene Logo muss mindestens 350 Pixel breit sein.")
+        if image.width < 250:
+            raise ValueError("Das hochgeladene Logo muss mindestens 250 Pixel breit sein.")
         
         if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
             background = Image.new(image.mode[:-1], image.size, (255, 255, 255))

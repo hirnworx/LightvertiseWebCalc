@@ -20,6 +20,7 @@ def profile5s(typeheight_cm, upcharge_percent=80):
     # }
 
     price_points = {
+        10:  10,
         100: 139,
         125: 139,
         150: 139,

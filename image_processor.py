@@ -1,20 +1,24 @@
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw
+import logging
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# Define minimum and maximum height constants
+MIN_HEIGHT = 2.0  # Example minimum height in cm
+MAX_HEIGHT = 250.0  # Example maximum height in cm
 
 def process_image(filename, reference_measure_cm, ref_type):
     # Read the image
     try:
         img = cv2.imread(filename)
-        file_path = "original_code_image.jpg"
         if img is None:
-            raise ValueError("Image not found or the path is incorrect")
-    except:
+            raise ValueError("Bild nicht gefunden oder der Pfad ist falsch")
+    except Exception as e:
+        logging.error(f"Fehler beim Lesen des Bildes: {e}")
         img = filename
-        file_path = "flask_server_image.jpg"
-
-    # cv2.imwrite(file_path, img)
 
     # Convert to grayscale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -28,13 +32,16 @@ def process_image(filename, reference_measure_cm, ref_type):
 
     # Sort contours by area
     contours = sorted(contours, key=cv2.contourArea, reverse=True)
+
+    if not contours:
+        raise ValueError("Keine Konturen im Bild gefunden")
+
     signet_contour = contours[0]
     x, y, w, h = cv2.boundingRect(signet_contour)
-    
-    # Initialize variables to hold the extreme points
-    min_x, min_y, max_x, max_y = x, y, x+w, y+h
-    max_height = h
 
+    # Initialize variables to hold the extreme points
+    min_x, min_y, max_x, max_y = x, y, x + w, y + h
+    max_height = h
 
     # Calculate total width and height of the entire logo
     for contour in contours:
@@ -47,7 +54,6 @@ def process_image(filename, reference_measure_cm, ref_type):
     total_width_px = max_x - min_x
     total_height_px = max_y - min_y
 
-
     # Determine the scaling factor
     if ref_type == 3:  # Reference by height
         scaling_factor = reference_measure_cm / max_height
@@ -56,7 +62,9 @@ def process_image(filename, reference_measure_cm, ref_type):
     elif ref_type == 2:  # Reference by total height
         scaling_factor = reference_measure_cm / total_height_px
     else:
-        raise ValueError("Invalid reference type")
+        raise ValueError("Ungültiger Referenztyp")
+
+    logging.debug(f"Skalierungsfaktor: {scaling_factor}")
 
     # Convert to PIL Image for drawing annotations
     pil_img = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
@@ -64,10 +72,17 @@ def process_image(filename, reference_measure_cm, ref_type):
 
     output_lines = [f"Signet height: {scaling_factor * max_height:.2f} cm"]
 
-    # Draw and annotate all contours
+    valid_contours = []
+    invalid_heights = []
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
         element_height_cm = scaling_factor * h
+        # Filter out invalid heights
+        if element_height_cm < MIN_HEIGHT or element_height_cm > MAX_HEIGHT:
+            logging.debug(f"Gefilterte ungültige Höhe: {element_height_cm:.2f} cm")
+            invalid_heights.append(element_height_cm)
+            continue
+        valid_contours.append(contour)
         draw.rectangle([x, y, x + w, y + h], outline="green", width=2)
         output_lines.append(f"Element height: {element_height_cm:.2f} cm")
 
@@ -97,7 +112,15 @@ def process_image(filename, reference_measure_cm, ref_type):
     # Convert back to PIL image to return it for the UI
     processed_pil_image = Image.fromarray(cv2.cvtColor(np.array(pil_img), cv2.COLOR_RGB2BGR))
 
-    return processed_pil_image, '\n'.join(output_lines), total_width_cm, total_height_cm
+    return processed_pil_image, '\n'.join(output_lines), total_width_cm, total_height_cm, invalid_heights
+
+
+
+
+
+
+
+
 
 
 

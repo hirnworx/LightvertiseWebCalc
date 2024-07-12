@@ -4,8 +4,11 @@ from .db_config import DB_CONFIG
 import json
 from datetime import datetime
 
+connection = None  # Global variable to store the connection
+
 def create_db_connection():
     """Establishes a database connection using the credentials defined in db_config.py."""
+    global connection
     try:
         connection = mysql.connector.connect(
             host=DB_CONFIG["host"],
@@ -18,6 +21,14 @@ def create_db_connection():
     except Error as err:
         print(f"Fehler: '{err}'")
         return None
+
+def reconnect_db():
+    """Re-establishes the database connection."""
+    global connection
+    if connection is not None and connection.is_connected():
+        close_connection(connection)
+    connection = create_db_connection()
+    print("Datenbankverbindung wurde erneuert")
 
 def create_table(connection):
     """Creates tables if they do not exist."""
@@ -134,8 +145,8 @@ def insert_error_form_submission(connection, data):
     try:
         cursor = connection.cursor()
         query = """INSERT INTO error_form_submissions 
-                   (company_name, customer_name, customer_email, customer_phone, customer_street, customer_zipcode, customer_city, error_message) 
-                   VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
+                (company_name, customer_name, customer_email, customer_phone, customer_street, customer_zipcode, customer_city, error_message) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
         cursor.execute(query, (
             data['company_name'], 
             data['customer_name'], 

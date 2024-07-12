@@ -524,20 +524,30 @@
             output.val(this.value);
         }
 
-        $(".reference_height").on("input", function () {
-            var slider = $("#range");
-            var value = parseInt($(this).val(), 10);
-            if (value >= parseInt(slider.attr("min"), 10) && value <= parseInt(slider.attr("max"), 10)) {
-                slider.val(value);
-                output.val(value);
-            } else {
-                alert("Invalid range. Please enter a value between " + parseInt(slider.attr("min"), 10) + " and " + parseInt(slider.attr("max"), 10));
-                $("#range, .reference_height").prop('min', parseInt(slider.attr("min"), 10));
-                $("#range, .reference_height").prop('max', parseInt(slider.attr("max"), 10));
-                slider.val(parseInt(slider.attr("min"), 10));
-                $(this).val(parseInt(slider.attr("min"), 10));
-            }
-        });
+        function debounce(func, wait) {
+    let timeout;
+    return function () {
+        const context = this, args = arguments;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+$(".reference_height").on("input", debounce(function () {
+    var slider = $("#range");
+    var value = parseInt($(this).val(), 10);
+    if (value >= parseInt(slider.attr("min"), 10) && value <= parseInt(slider.attr("max"), 10)) {
+        slider.val(value);
+        output.val(value);
+    } else {
+        alert("Invalid range. Please enter a value between " + parseInt(slider.attr("min"), 10) + " and " + parseInt(slider.attr("max"), 10));
+        $("#range, .reference_height").prop('min', parseInt(slider.attr("min"), 10));
+        $("#range, .reference_height").prop('max', parseInt(slider.attr("max"), 10));
+        slider.val(parseInt(slider.attr("min"), 10));
+        $(this).val(parseInt(slider.attr("min"), 10));
+    }
+}, 1000));  // Adjust the debounce time (500 ms in this case) as needed
+
 
         $('#errorContactForm').submit(function (event) {
             event.preventDefault();

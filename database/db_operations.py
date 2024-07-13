@@ -14,7 +14,8 @@ def create_db_connection():
             host=DB_CONFIG["host"],
             user=DB_CONFIG["user"],
             password=DB_CONFIG["password"],
-            database=DB_CONFIG["database"]
+            database=DB_CONFIG["database"],
+            connection_timeout=28800  # 8 hours
         )
         print("MySQL-Datenbankverbindung erfolgreich")
         return connection
@@ -74,6 +75,8 @@ def create_table(connection):
         print("Tabellen erfolgreich erstellt")
     except Error as err:
         print(f"Fehler: '{err}'")
+        reconnect_db()
+        create_table(connection)
 
 def insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data=None):
     cursor = connection.cursor()
@@ -140,6 +143,8 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
         print("Abfrage erfolgreich")
     except Error as err:
         print(f"Fehler: '{err}'")
+        reconnect_db()
+        insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data)
 
 def insert_error_form_submission(connection, data):
     try:
@@ -161,9 +166,21 @@ def insert_error_form_submission(connection, data):
         cursor.close()
     except Error as e:
         print("Fehler beim Einfügen des Datensatzes in die Tabelle error_form_submissions", e)
+        reconnect_db()
+        insert_error_form_submission(connection, data)
 
 def close_connection(connection):
     """Closes the database connection."""
     if connection.is_connected():
         connection.close()
         print("MySQL-Verbindung ist geschlossen")
+
+# Call create_db_connection on script start
+create_db_connection()
+
+# Example usage with automatic reconnection
+try:
+    create_table(connection)
+except Error as e:
+    print(f"Fehler bei der Erstellung der Tabellen: {e}")
+    reconnect_db()

@@ -1,5 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
+from mysql.connector import errorcode
+from functools import wraps
 from .db_config import DB_CONFIG
 import json
 from datetime import datetime
@@ -14,8 +16,7 @@ def create_db_connection():
             host=DB_CONFIG["host"],
             user=DB_CONFIG["user"],
             password=DB_CONFIG["password"],
-            database=DB_CONFIG["database"],
-            connection_timeout=28800  # 8 hours
+            database=DB_CONFIG["database"]
         )
         print("MySQL-Datenbankverbindung erfolgreich")
         return connection
@@ -31,6 +32,30 @@ def reconnect_db():
     connection = create_db_connection()
     print("Datenbankverbindung wurde erneuert")
 
+def close_connection(connection):
+    """Closes the database connection."""
+    if connection.is_connected():
+        connection.close()
+        print("MySQL-Verbindung ist geschlossen")
+
+def reconnect_cursor(func):
+    """Decorator to reconnect the cursor and retry the function if a disconnect occurs."""
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        global connection
+        try:
+            return func(*args, **kwargs)
+        except mysql.connector.Error as err:
+            if err.errno in [errorcode.CR_SERVER_LOST, errorcode.CR_SERVER_GONE_ERROR, errorcode.CR_CONNECTION_ERROR]:
+                print("Verbindung verloren, versuche erneut zu verbinden...")
+                reconnect_db()
+                return func(*args, **kwargs)
+            else:
+                print(f"Fehler: '{err}'")
+                raise
+    return wrapper
+
+@reconnect_cursor
 def create_table(connection):
     """Creates tables if they do not exist."""
     cursor = connection.cursor()
@@ -75,9 +100,8 @@ def create_table(connection):
         print("Tabellen erfolgreich erstellt")
     except Error as err:
         print(f"Fehler: '{err}'")
-        reconnect_db()
-        create_table(connection)
 
+@reconnect_cursor
 def insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data=None):
     cursor = connection.cursor()
 
@@ -89,6 +113,7 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
     timestamp = datetime.now()
 
     customer_name = customer_street = customer_city = customer_zipcode = customer_phone = customer_email = ""
+    company_name = ""
 
     if customer_data is not None:
         company_name = customer_data.get("company_name", "")
@@ -143,9 +168,8 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
         print("Abfrage erfolgreich")
     except Error as err:
         print(f"Fehler: '{err}'")
-        reconnect_db()
-        insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data)
 
+@reconnect_cursor
 def insert_error_form_submission(connection, data):
     try:
         cursor = connection.cursor()
@@ -166,14 +190,6 @@ def insert_error_form_submission(connection, data):
         cursor.close()
     except Error as e:
         print("Fehler beim Einfügen des Datensatzes in die Tabelle error_form_submissions", e)
-        reconnect_db()
-        insert_error_form_submission(connection, data)
-
-def close_connection(connection):
-    """Closes the database connection."""
-    if connection.is_connected():
-        connection.close()
-        print("MySQL-Verbindung ist geschlossen")
 
 # Call create_db_connection on script start
 create_db_connection()
@@ -184,3 +200,4 @@ try:
 except Error as e:
     print(f"Fehler bei der Erstellung der Tabellen: {e}")
     reconnect_db()
+    create_table(connection)

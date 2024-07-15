@@ -6,11 +6,8 @@ from .db_config import DB_CONFIG
 import json
 from datetime import datetime
 
-connection = None  # Global variable to store the connection
-
 def create_db_connection():
     """Establishes a database connection using the credentials defined in db_config.py."""
-    global connection
     try:
         connection = mysql.connector.connect(
             host=DB_CONFIG["host"],
@@ -24,38 +21,27 @@ def create_db_connection():
         print(f"Fehler: '{err}'")
         return None
 
-def reconnect_db():
-    """Re-establishes the database connection."""
-    global connection
-    if connection is not None and connection.is_connected():
-        close_connection(connection)
-    connection = create_db_connection()
-    print("Datenbankverbindung wurde erneuert")
-
 def close_connection(connection):
     """Closes the database connection."""
     if connection.is_connected():
         connection.close()
         print("MySQL-Verbindung ist geschlossen")
 
-def reconnect_cursor(func):
-    """Decorator to reconnect the cursor and retry the function if a disconnect occurs."""
+def with_db_connection(func):
+    """Decorator to establish and close a database connection for each query."""
     @wraps(func)
     def wrapper(*args, **kwargs):
-        global connection
+        connection = create_db_connection()
+        if connection is None or not connection.is_connected():
+            raise mysql.connector.errors.OperationalError("MySQL Connection not available.")
         try:
-            return func(*args, **kwargs)
-        except mysql.connector.Error as err:
-            if err.errno in [errorcode.CR_SERVER_LOST, errorcode.CR_SERVER_GONE_ERROR, errorcode.CR_CONNECTION_ERROR]:
-                print("Verbindung verloren, versuche erneut zu verbinden...")
-                reconnect_db()
-                return func(*args, **kwargs)
-            else:
-                print(f"Fehler: '{err}'")
-                raise
+            result = func(connection, *args, **kwargs)
+            return result
+        finally:
+            close_connection(connection)
     return wrapper
 
-@reconnect_cursor
+@with_db_connection
 def create_table(connection):
     """Creates tables if they do not exist."""
     cursor = connection.cursor()
@@ -101,7 +87,7 @@ def create_table(connection):
     except Error as err:
         print(f"Fehler: '{err}'")
 
-@reconnect_cursor
+@with_db_connection
 def insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data=None):
     cursor = connection.cursor()
 
@@ -169,7 +155,7 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
     except Error as err:
         print(f"Fehler: '{err}'")
 
-@reconnect_cursor
+@with_db_connection
 def insert_error_form_submission(connection, data):
     try:
         cursor = connection.cursor()
@@ -188,16 +174,12 @@ def insert_error_form_submission(connection, data):
         ))
         connection.commit()
         cursor.close()
+        print("Datensatz erfolgreich eingefügt")
     except Error as e:
         print("Fehler beim Einfügen des Datensatzes in die Tabelle error_form_submissions", e)
 
-# Call create_db_connection on script start
-create_db_connection()
-
 # Example usage with automatic reconnection
 try:
-    create_table(connection)
+    create_table()  # No need to pass connection; it's handled by the decorator
 except Error as e:
     print(f"Fehler bei der Erstellung der Tabellen: {e}")
-    reconnect_db()
-    create_table(connection)

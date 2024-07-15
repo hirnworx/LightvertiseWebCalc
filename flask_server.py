@@ -12,7 +12,7 @@ import cv2
 import image_processor
 import vector_to_jpeg
 from pricing import profile5s, calculate_railprice
-from database.db_operations import create_db_connection, create_table, insert_calculation_result, insert_error_form_submission
+from database.db_operations import create_table, insert_calculation_result, insert_error_form_submission
 from validator import validate_heights, validate_dimensions
 from flask_cors import CORS
 
@@ -22,10 +22,11 @@ CORS(app)
 # Initialize filename as None
 filename = None
 
-# Establish a database connection and create tables
-connection = create_db_connection()
-if connection is not None:
-    create_table(connection)
+# Create tables in the database
+try:
+    create_table()
+except Exception as e:
+    print(f"Fehler bei der Erstellung der Tabellen: {e}")
 
 def start_database_monitor():
     script_path = os.path.join(os.path.dirname(__file__), 'database_monitor.py')
@@ -88,7 +89,6 @@ import base64
 import cv2
 import numpy as np
 from image_processor import process_image
-from database.db_operations import insert_calculation_result
 from pricing import profile5s, calculate_railprice
 from validator import validate_heights, validate_dimensions
 
@@ -132,8 +132,8 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
             "output_image": image_data
         }
 
-        if connection is not None and save_customer_data:
-            insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data)
+        if save_customer_data:
+            insert_calculation_result(calculation_data, total_width, total_height, customer_data)
 
         return calculation_data, customer_data, rail_price, error
 
@@ -155,12 +155,6 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
 
     return calculation_data, customer_data, rail_price, error
 
-
-
-
-
-
-
 def update_image_label(tk_image):
     image_label.config(image=tk_image)
     image_label.image = tk_image
@@ -172,7 +166,6 @@ def reset_fields(event=None):
     height_entry.delete(0, tk.END)
     output_text.delete('1.0', END)
     image_label.config(image=None)
-
 
 @app.route('/calculate_logo_data',methods=['POST'])
 def calculate_logo_data():
@@ -287,7 +280,7 @@ def calculate_logo_data():
 def save_error_data():
     try:
         data = request.json
-        insert_error_form_submission(connection, data)
+        insert_error_form_submission(data)  # no need to pass connection
         return jsonify({"message": "Daten erfolgreich gespeichert."}), 200
     except Exception as e:
         print(f"Fehler beim Speichern der Daten: {e}")

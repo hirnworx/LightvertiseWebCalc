@@ -535,12 +535,6 @@
         slider.oninput = function () {
             output.val(this.value);
             $('#errorContactForm, #contactForm')[0].reset();
-            $("#fileName").html('');
-            $("#fileSize").html('');
-            $("#uploadBox").show();
-            $('#uploadFile').val('');
-            $('#uploadedImg').attr('src', '');
-            $("#uploadedFile").hide();
             $("#length, #width").hide();
             $("#modalButton").attr("disabled", true);
             $(".directPrice").attr("disabled", true);

@@ -534,10 +534,10 @@
         output.val(slider.value);
         slider.oninput = function () {
             output.val(this.value);
-            $('#errorContactForm, #contactForm')[0].reset();
+            //$('#errorContactForm, #contactForm')[0].reset();
             $("#length, #width").hide();
             $("#modalButton").attr("disabled", true);
-            $(".directPrice").attr("disabled", true);
+            $(".directPrice").attr("disabled", false);
             priceCalculated = false;            
         }
 

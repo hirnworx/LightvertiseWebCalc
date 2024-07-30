@@ -536,6 +536,8 @@
             output.val(this.value);
             //$('#errorContactForm, #contactForm')[0].reset();
             $("#length, #width").hide();
+            $('#uploadedImg').attr('src', $(".imageData").val());
+            $(".price_including_rail").html('');
             $("#modalButton").attr("disabled", true);
             $(".directPrice").attr("disabled", false);
             priceCalculated = false;            
@@ -556,6 +558,12 @@ $(".reference_height").on("input", debounce(function () {
     if (value >= parseInt(slider.attr("min"), 10) && value <= parseInt(slider.attr("max"), 10)) {
         slider.val(value);
         output.val(value);
+        /* $("#length, #width").hide();
+        $('#uploadedImg').attr('src', $(".imageData").val());
+        $(".price_including_rail").html('');
+        $("#modalButton").attr("disabled", true);
+        $(".directPrice").attr("disabled", false);
+        priceCalculated = false;   */
     } else {
         alert("Invalid range. Please enter a value between " + parseInt(slider.attr("min"), 10) + " and " + parseInt(slider.attr("max"), 10));
         $("#range, .reference_height").prop('min', parseInt(slider.attr("min"), 10));

@@ -1,6 +1,7 @@
 # validator.py
 
-from pricing import MIN_HEIGHT, MAX_HEIGHT
+# from pricing import MIN_HEIGHT, MAX_HEIGHT
+from pricing_logic_letters import MIN_HEIGHT, MAX_HEIGHT
 
 def validate_heights(heights):
     invalid_heights = [height for height in heights if height < MIN_HEIGHT or height > MAX_HEIGHT]

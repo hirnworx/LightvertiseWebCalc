@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'lightvertise';
-  src:  url('fonts/lightvertise.eot?8975vt');
-  src:  url('fonts/lightvertise.eot?8975vt#iefix') format('embedded-opentype'),
-    url('fonts/lightvertise.ttf?8975vt') format('truetype'),
-    url('fonts/lightvertise.woff?8975vt') format('woff'),
-    url('fonts/lightvertise.svg?8975vt#lightvertise') format('svg');
+  src:  url('fonts/lightvertise.eot?b9nx98');
+  src:  url('fonts/lightvertise.eot?b9nx98#iefix') format('embedded-opentype'),
+    url('fonts/lightvertise.ttf?b9nx98') format('truetype'),
+    url('fonts/lightvertise.woff?b9nx98') format('woff'),
+    url('fonts/lightvertise.svg?b9nx98#lightvertise') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,6 +25,9 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.custom-icon-arrow-left:before {
+  content: "\e90f";
+}
 .custom-icon-arrow-down:before {
   content: "\e900";
 }

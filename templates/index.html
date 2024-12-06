@@ -15,6 +15,12 @@
 <body>
     <div class="page-wrapper">
         <nav class="navbar">
+            <a class="back-to-go backBtn hide" href="javascript:void(0)">
+                <i class="custom-icon-arrow-left"></i>
+                <span>
+                    Zurück zur auswahl
+                </span>
+            </a>
             <a class="navbar-brand">
                 <img src="assets/img/logo.png" alt="Lightvertise" class="img-fluid" width="227">
             </a>
@@ -53,7 +59,7 @@
                 <h2 class="text-center">Ihre 3D-Leuchtbuchstaben-Konfiguration</h2>
                 <div class="row">
                     <div class="col-12 col-md-12 mx-auto">
-                        <div class="row">
+                        <div class="row card-items-center">
                             <div class="col-12 col-md-6" id="accordion">
                                 <div class="card custom-card step-1 is-open">
                                     <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
@@ -66,7 +72,7 @@
                                             <span class="mr-3 text-primary d-inline-block text-right" id="fileSize"></span>
                                             <i class="custom-icon-arrow-down" data-toggle="collapse"
                                                 data-target="#step_1" aria-expanded="true" aria-controls="step_1"></i>
-                                            <i class="custom-icon-info text-primary"></i>
+                                            <!-- <i class="custom-icon-info text-primary"></i> -->
                                         </div>
                                     </div>
                                     <div class="collapse show" id="step_1" data-parent="#accordion">
@@ -142,7 +148,7 @@
                                 <div class="card custom-card step-3">
                                     <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
                                         <p class="mb-0">
-                                            <i class="tick-icon custom-icon-tick-circle mr-1 hide"></i>
+                                            <i class="tick-icon custom-icon-tick-circle mr-1"></i>
                                             <strong>Schritt 3:</strong>
                                             <span>
                                                 Geben Sie <u>eines</u> der drei Maße an
@@ -151,7 +157,7 @@
                                         <div>
                                             <i class="custom-icon-arrow-down" data-toggle="collapse" data-target="#step_3" aria-expanded="true" aria-controls="step_3"></i>
                                             <!-- <i class="custom-icon-info text-primary" data-toggle="modal" data-target="#modal_info"></i> -->
-                                            <i class="custom-icon-info text-primary"></i>
+                                            <!-- <i class="custom-icon-info text-primary"></i> -->
                                         </div>
                                     </div>
                                     <div class="collapse" id="step_3" data-parent="#accordion">
@@ -250,7 +256,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row my-4">
+                <div class="row my-4 buttons-bottom">
                     <div class="col-12">
                         <div class="text-center">
                             <!-- <button class="btn go-back" title="zurück">
@@ -260,7 +266,7 @@
                                 <i class="custom-icon-email mr-2"></i>
                                 Sofortangebot erhalten
                             </button>
-                            <button class="btn btn-primary btn-lg mr-3 backBtn">Zurück</button>
+                            <!-- <button class="btn btn-primary btn-lg mr-3 backBtn">Zurück</button> -->
                         </div>
                     </div>
                 </div>
@@ -273,7 +279,7 @@
                 <h2 class="text-center">Ihre 3D-Leuchtbuchstaben-Konfiguration</h2>
                 <div class="row">
                     <div class="col-12 col-md-12 mx-auto">
-                        <div class="row">
+                        <div class="row card-items-center">
                             <div class="col-12 col-md-6" id="lightbox_accordion">
                                 <div class="card custom-card step-1 lightbox is-open">
                                     <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
@@ -286,7 +292,7 @@
                                         <div>
                                             <i class="custom-icon-arrow-down" data-toggle="collapse" data-target="#lightbox_step_1"
                                             aria-expanded="true" aria-controls="lightbox_step_1"></i>
-                                            <i class="custom-icon-info text-primary"></i>
+                                            <!-- <i class="custom-icon-info text-primary"></i> -->
                                         </div>
                                     </div>
                                     <div class="collapse show" id="lightbox_step_1" data-parent="#lightbox_accordion">
@@ -319,7 +325,7 @@
                                         <div>
                                             <i class="custom-icon-arrow-down" data-toggle="collapse" data-target="#lightbox_step_2"
                                                 aria-expanded="true" aria-controls="lightbox_step_2"></i>
-                                            <i class="custom-icon-info text-primary"></i>
+                                            <!-- <i class="custom-icon-info text-primary"></i> -->
                                         </div>
                                     </div>
                                     <div class="collapse" id="lightbox_step_2" data-parent="#lightbox_accordion">
@@ -345,14 +351,14 @@
                                 <div class="card custom-card step-3 lightbox-3">
                                     <div class="card-header d-flex flex-wrap justify-content-between align-items-center">
                                         <p class="mb-0">
-                                            <i class="tick-icon custom-icon-tick-circle mr-1 hide"></i>
+                                            <i class="tick-icon custom-icon-tick-circle mr-1"></i>
                                             <strong>Schritt 3:</strong>
                                             <span>Abmessung Ihres Leuchtkastens (in cm)</span>
                                         </p>
                                         <div>
                                             <i class="custom-icon-arrow-down" data-toggle="collapse" data-target="#lightbox_step_3"
                                                 aria-expanded="true" aria-controls="lightbox_step_3"></i>
-                                            <i class="custom-icon-info text-primary"></i>
+                                            <!-- <i class="custom-icon-info text-primary"></i> -->
                                         </div>
                                     </div>
                                     <div class="collapse" id="lightbox_step_3" data-parent="#lightbox_accordion">
@@ -412,24 +418,26 @@
                             <div class="col-12 col-md-6">
                                 <div class="card custom-card uploaded">
                                     <div class="card-body position-relative">
-                                        <div id="length" class="hide">
-                                            <i class="custom-icon-h-width"></i>
-                                            Breite:<span class="lightbox_length text-primary">322 cm</span>
-                                        </div>
-                                        <div id="width" class="hide">
-                                            <i class="custom-icon-v-height"></i>
-                                            Höhe: <span class="lightbox_width text-primary">322 cm</span>
+                                        <div class="d-flex">
+                                            <div id="length" class="hide">
+                                                <i class="custom-icon-h-width"></i>
+                                                Breite:<span class="lightbox_length text-primary">322 cm</span>
+                                            </div>
+                                            <div id="width" class="hide">
+                                                <i class="custom-icon-v-height"></i>
+                                                Höhe: <span class="lightbox_width text-primary">322 cm</span>
+                                            </div>
                                         </div>
                                         <div class="inner-content">
-                                            <div class="uploaded-img">
+                                            <div class="uploaded-img inner-lightbox">
                                                 <!-- <img src="assets/img/upload-logo.png" alt="450" class="img-fluid my-0" id="uploadedImg"> -->
                                                 
-                                                <label class="lightbox-upload-box" for="uploadLightboxFile">
+                                                <label class="lightbox-upload-box" for="uploadLightboxFile" style="width: 150px; height: 150px;position: absolute; left: 0; right: 0; top: 0; bottom:0; margin: auto;">
                                                     <!-- <i class="custom-icon-img-upload"></i>
                                                     <p>Individuelles Design</p> -->
                                                 </label>
                                             </div>
-                                            <div class="text-right">
+                                            <div class="text-right lightBoxPrice hide">
                                                 <p>Kalkulierter Preis:</p>
                                                 <!-- <h4>€ 9.425,-</h4> -->
                                                 <h4 class="lightbox_price_including_rail">€ 9.425,-</h4>
@@ -441,7 +449,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row my-4">
+                <div class="row my-4 buttons-bottom">
                     <div class="col-12">
                         <div class="text-center">
                             <!-- <button class="btn go-back" title="zurück">
@@ -450,7 +458,7 @@
                             <button class="btn btn-primary btn-lg mr-3" data-toggle="modal" data-target="#lightboxDetailModal" id="lightboxModalButton" disabled>
                                 <i class="custom-icon-email mr-2"></i>Sofortangebot erhalten
                             </button>
-                            <button class="btn btn-primary btn-lg mr-3 backBtn">Zurück</button>
+                            <!-- <button class="btn btn-primary btn-lg mr-3 backBtn">Zurück</button> -->
                         </div>
                     </div>
                 </div>
@@ -466,8 +474,8 @@
         </p>
         <a href="javascript:void(0)" class="close-ad-button">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M18 6L6.00038 17.9996" stroke="#fff" stroke-width="2" stroke-linecap="round" />
-                <path d="M18 18L6.00038 6.00037" stroke="#fff" stroke-width="2" stroke-linecap="round" />
+                <path d="M18 6L6.00038 17.9996" stroke="#000" stroke-width="2" stroke-linecap="round" />
+                <path d="M18 18L6.00038 6.00037" stroke="#000" stroke-width="2" stroke-linecap="round" />
             </svg>
         </a>
     </a>
@@ -730,6 +738,7 @@
                                         <li>Optional mit Entwässerungsbohrungen</li>
                                     </ul>
                                 </div>
+                                <img src="assets/img/model-d-1.png" alt="Modell D" class="img-fluid">
                             </div>
                             <div class="col-12 col-md-3">
                                 <div class="item-card">
@@ -744,6 +753,7 @@
                                         <li>Optional mit Entwässerungsbohrungen</li>
                                     </ul>
                                 </div>
+                                <img src="assets/img/model-p-1.png" alt="Modell D" class="img-fluid">
                             </div>
                             <div class="col-12 col-md-3">
                                 <div class="item-card">
@@ -758,6 +768,7 @@
                                         <li>Montage mit Easy-Click-Distanzhaltern</li>
                                     </ul>
                                 </div>
+                                <img src="assets/img/halo-1.png" alt="Modell D" class="img-fluid">
                             </div>
                             <div class="col-12 col-md-3">
                                 <div class="item-card">
@@ -771,19 +782,6 @@
                                         <li>Geringe Buchstabenstärke (30 mm)</li>
                                     </ul>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-12 col-md-3">
-                                <img src="assets/img/model-d-1.png" alt="Modell D" class="img-fluid">
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <img src="assets/img/model-p-1.png" alt="Modell D" class="img-fluid">
-                            </div>
-                            <div class="col-12 col-md-3">
-                                <img src="assets/img/halo-1.png" alt="Modell D" class="img-fluid">
-                            </div>
-                            <div class="col-12 col-md-3">
                                 <img src="assets/img/ACRYLIC-1.png" alt="Modell D" class="img-fluid">
                             </div>
                         </div>
@@ -805,9 +803,11 @@
             } else if($(this).attr('data-selection_name') == "lightbox"){
                 $(".lightboxScreen").removeClass("hide")
             }
+            $(".backBtn").removeClass("hide")
         })
 
         $(".backBtn").on("click", function(){
+            $(this).addClass("hide")
             $(".mainScreen").removeClass("hide")
             $(".3dLetterScreen").addClass("hide");
             $(".lightboxScreen").addClass("hide")
@@ -859,11 +859,13 @@
         })
 
         $(".letterPriceBtn").click(function(){
+            $(".3dLetterScreen .step-3").addClass("done")
             $(".save_customer_data").val(0)
             $("#contactForm").trigger("submit");
         });
 
         $(".lightboxPriceBtn").click(function(){
+            $(".lightboxScreen .step-3").addClass("done")
             $(".lightbox_save_customer_data").val(0)
             $("#lightboxContactForm").trigger("submit");
         });
@@ -927,7 +929,7 @@
                         $('#uploadedImg').attr('src', `data:image/png;base64,${modifiedString}`);
                         $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2) )
                         
-                        $("#length, #width").show();
+                        $("#length, #width").removeClass("hide");
                         $(".length").html(response.data.total_width)
                         $(".width").html(response.data.total_height)
                         
@@ -987,11 +989,16 @@
                 data: JSON.stringify(dataObject),
                 success: function(response) {
                     if(response){
+                        const $mainBox = $(".inner-lightbox");
+                        const maxWidth = $mainBox.width();
+                        const maxHeight = $mainBox.height();
+                        $(".lightBoxPrice").removeClass("hide");
                         $(".lightbox_price_including_rail").html("€ " + response.data.final_price.toFixed(2) )
                         
-                        $("#length, #width").show();
+                        $("#length, #width").removeClass("hide");
                         $(".lightbox_length").html(response.data.width + " cm")
                         $(".lightbox_width").html(response.data.height + " cm")
+
                         
                         $('#lightboxContactForm')[0].reset();
                         if(Number($(".lightbox_save_customer_data").val())){
@@ -999,8 +1006,14 @@
                         }else{
                             $(".lightboxPriceBtn").prop("disabled", true)
                         }
-                        $(".lightbox-upload-box").css("width", response.data.width + "px");
-                        $(".lightbox-upload-box").css("height", response.data.height + "px");
+                        newWidth = Math.min(response.data.width, maxWidth);
+                        newHeight = Math.min(response.data.height, maxHeight);
+
+                        $(".lightbox-upload-box").width(newWidth);
+                        $(".lightbox-upload-box").height(newHeight);
+
+                        /* $(".lightbox-upload-box").css("width", response.data.width + "px");
+                        $(".lightbox-upload-box").css("height", response.data.height + "px"); */
                         $("#lightboxDetailModal").modal('hide');
                         $("#lightboxModalButton").attr("disabled", false);
                     }
@@ -1057,7 +1070,7 @@
         output.val(slider.value);
         slider.oninput = function () {
             output.val(this.value);
-            $("#length, #width").hide();
+            $("#length, #width").addClass("hide");
             $('#uploadedImg').attr('src', $(".imageData").val());
             $(".price_including_rail").html('');
             $("#letterModalButton").attr("disabled", true);
@@ -1087,7 +1100,8 @@
         output1.val(lightbox_slider.value);
         lightbox_slider.oninput = function () {
             output1.val(this.value);
-            $("#length, #width").hide();
+            $("#length, #width").addClass("hide");
+            $(".lightBoxPrice").addClass("hide");
             $(".lightbox_price_including_rail").html('');
             $("#lightboxModalButton").attr("disabled", true);
             $(".lightboxPriceBtn").attr("disabled", false);
@@ -1099,7 +1113,8 @@
         output2.val(lightbox_slider2.value);
         lightbox_slider2.oninput = function () {
             output2.val(this.value);
-            $("#length, #width").hide();
+            $("#length, #width").addClass("hide");
+            $(".lightBoxPrice").addClass("hide");
             $(".lightbox_price_including_rail").html('');
             $("#lightboxModalButton").attr("disabled", true);
             $(".lightboxPriceBtn").attr("disabled", false);
@@ -1108,6 +1123,7 @@
         $(".lightbox_reference_height").on("blur", function () {
             var slider = $("#lightbox_range1");
             var value = parseInt($(this).val(), 10);
+            $(".lightboxPriceBtn").attr("disabled", false);
             if (value >= parseInt(slider.attr("min"), 10) && value <= parseInt(slider.attr("max"), 10)) {
                 slider.val(value);
                 output1.val(value);
@@ -1118,12 +1134,14 @@
                 $("#lightbox_range1, .reference_height").prop('max', parseInt(slider.attr("max"), 10))
                 slider.val(parseInt(slider.attr("min"), 10));
                 $(this).val(parseInt(slider.attr("min"), 10));
+                $(".lightboxPriceBtn").attr("disabled", true);
             }
         });
 
         $(".lightbox_reference_width").on("blur", function () {
             var slider = $("#lightbox_range2");
             var value = parseInt($(this).val(), 10);
+            $(".lightboxPriceBtn").attr("disabled", false);
             if (value >= parseInt(slider.attr("min"), 10) && value <= parseInt(slider.attr("max"), 10)) {
                 slider.val(value);
                 output2.val(value);
@@ -1134,6 +1152,7 @@
                 $("#lightbox_range2, .reference_height").prop('max', parseInt(slider.attr("max"), 10))
                 slider.val(parseInt(slider.attr("min"), 10));
                 $(this).val(parseInt(slider.attr("min"), 10));
+                $(".lightboxPriceBtn").attr("disabled", true);
             }
         });
 

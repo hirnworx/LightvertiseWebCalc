@@ -60,7 +60,8 @@ def create_table(connection):
         customer_city VARCHAR(255),
         customer_zipcode VARCHAR(10),
         customer_phone VARCHAR(20),
-        customer_email VARCHAR(255)
+        customer_email VARCHAR(255),
+        letter_type VARCHAR(20)
     ) ENGINE=INNODB;
     """
     
@@ -79,16 +80,36 @@ def create_table(connection):
     ) ENGINE=INNODB;
     """
     
+    create_lightbox_calculation_results_table_query = """
+    CREATE TABLE IF NOT EXISTS lightbox_calculation_results (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        width FLOAT,
+        height FLOAT,
+        type VARCHAR(20),
+        lkw VARCHAR(20),
+        final_price FLOAT, 
+        timestamp DATETIME,
+        company_name VARCHAR(255),
+        customer_name VARCHAR(255),
+        customer_street VARCHAR(255),
+        customer_city VARCHAR(255),
+        customer_zipcode VARCHAR(10),
+        customer_phone VARCHAR(20),
+        customer_email VARCHAR(255)
+    ) ENGINE=INNODB;
+    """
+
     try:
         cursor.execute(create_calculation_results_table_query)
         cursor.execute(create_error_form_submissions_table_query)
+        cursor.execute(create_lightbox_calculation_results_table_query)
         connection.commit()
         print("Tabellen erfolgreich erstellt")
     except Error as err:
         print(f"Fehler: '{err}'")
 
 @with_db_connection
-def insert_calculation_result(connection, calculation_data, total_width, total_height, customer_data=None):
+def insert_calculation_result(connection, calculation_data, total_width, total_height, letter_type, customer_data=None):
     cursor = connection.cursor()
 
     # Ensure calculation_data is a dictionary with the expected keys
@@ -126,9 +147,10 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
         customer_city, 
         customer_zipcode, 
         customer_phone, 
-        customer_email
+        customer_email,
+        letter_type
     )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
     values = (
         json.dumps(calculation_data["calculation_data"]),
@@ -145,6 +167,66 @@ def insert_calculation_result(connection, calculation_data, total_width, total_h
         customer_city,
         customer_zipcode,
         customer_phone,
+        customer_email,
+        letter_type
+    )
+
+    try:
+        cursor.execute(insert_query, values)
+        connection.commit()
+        print("Abfrage erfolgreich")
+    except Error as err:
+        print(f"Fehler: '{err}'")
+
+@with_db_connection
+def insert_lightbox_calculation_result(connection, width, height, type, lkw, final_price, customer_data=None):
+    cursor = connection.cursor()
+
+    timestamp = datetime.now()
+
+    customer_name = customer_street = customer_city = customer_zipcode = customer_phone = customer_email = ""
+    company_name = ""
+
+    if customer_data is not None:
+        company_name = customer_data.get("company_name", "")
+        customer_name = customer_data.get("customer_name", "")
+        customer_street = customer_data.get("customer_street", "")
+        customer_city = customer_data.get("customer_city", "")
+        customer_zipcode = customer_data.get("customer_zipcode", "")
+        customer_phone = customer_data.get("customer_phone", "")
+        customer_email = customer_data.get("customer_email", "")
+
+    insert_query = """
+    INSERT INTO lightbox_calculation_results (
+        width, 
+        height,
+        type, 
+        lkw,
+        final_price,
+        timestamp,
+        company_name, 
+        customer_name, 
+        customer_street, 
+        customer_city, 
+        customer_zipcode, 
+        customer_phone, 
+        customer_email
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+    """
+    values = (
+        width, 
+        height,
+        type, 
+        lkw,
+        final_price,
+        timestamp,
+        company_name, 
+        customer_name, 
+        customer_street, 
+        customer_city, 
+        customer_zipcode, 
+        customer_phone, 
         customer_email
     )
 

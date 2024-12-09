@@ -9,10 +9,12 @@ import traceback
 from PIL import Image, ImageFilter
 import numpy as np
 import cv2
-import image_processor
+from image_processor import process_image
 import vector_to_jpeg
-from pricing import profile5s, calculate_railprice
-from database.db_operations import create_table, insert_calculation_result, insert_error_form_submission
+# from pricing import profile5s, calculate_railprice
+from pricing_logic_letters import letter_price_calculator, calculate_railprice
+from pricing_logic_lightbox import lk_price
+from database.db_operations import create_table, insert_calculation_result, insert_error_form_submission, insert_lightbox_calculation_result
 from validator import validate_heights, validate_dimensions
 from flask_cors import CORS
 
@@ -83,16 +85,7 @@ def define_reference_height(event=None):
     except ValueError:
         messagebox.showerror("Ungültige Eingabe", "Ungültiger Höhenwert. Bitte geben Sie eine gültige Nummer ein.")
 
-import traceback
-from PIL import ImageFilter
-import base64
-import cv2
-import numpy as np
-from image_processor import process_image
-from pricing import profile5s, calculate_railprice
-from validator import validate_heights, validate_dimensions
-
-def process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type):
+def process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type, letter_type):
     calculation_data = rail_price = error = None
     try:
         processed_pil_image, output_string, total_width, total_height, invalid_heights = process_image(image, reference_measure_cm, ref_type)
@@ -111,7 +104,8 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
             error = f"Leider sind einige Elemente in Ihrem Logo zu klein um Sie als Leuchtbuchstaben zu produzieren. Hier die Elemente von links nach rechts: {invalid_heights_str})."
             return calculation_data, customer_data, rail_price, error
 
-        total_price = sum(profile5s(height) for height in heights)
+        # total_price = sum(profile5s(height) for height in heights)
+        total_price = sum(letter_price_calculator(height, letter_type) for height in heights)
 
         width_valid, width_suggestions = validate_dimensions(total_width)
         if not width_valid:
@@ -133,7 +127,7 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
         }
 
         if save_customer_data:
-            insert_calculation_result(calculation_data, total_width, total_height, customer_data)
+            insert_calculation_result(calculation_data, total_width, total_height, letter_type, customer_data)
 
         return calculation_data, customer_data, rail_price, error
 
@@ -154,6 +148,48 @@ def process_image_thread(image, reference_measure_cm, customer_data, save_custom
         print("\n")
 
     return calculation_data, customer_data, rail_price, error
+
+# Function to calculate the price for light box
+def lightbox_calculate_price(width, height, type, lkw, customer_data, save_customer_data, upcharge_percent=80):
+    try:
+        final_price = error = None
+
+        qcm = width * height  # Calculate square centimeters
+        sqm = qcm / 10000     # Convert to square meters
+
+        # Debugging print
+        print(f"Width: {width} cm, Height: {height} cm, qcm: {qcm} cm², sqm: {sqm} m²")
+
+        if qcm > 0:
+            base_price = lk_price(qcm, type, lkw)
+        else:
+            base_price = 0
+        
+        if base_price == 0:
+            print(f"Price NOT applicable for these dimensions -> Width: {width}, Height: {height}")
+            return base_price, error
+        
+        # Apply upcharge to the base price
+        final_price = base_price * sqm * (1 + upcharge_percent / 100)
+
+        if save_customer_data:
+            insert_lightbox_calculation_result(width, height, type, lkw, final_price, customer_data)  # Pass customer_data here
+
+        return final_price, error
+
+    except Exception as ex:
+        error = traceback.format_exc()
+        print("\n")
+        print("------------------------------------------------")
+        print("   FEHLER:- " + str(ex))
+        print("------------------------------------------------")
+        print("\n")
+        print("---------------- Fehler-Traceback ---------------")
+        print(traceback.format_exc())
+        print("------------------------------------------------")
+        print("\n")
+
+        return final_price, error
 
 def update_image_label(tk_image):
     image_label.config(image=tk_image)
@@ -177,10 +213,13 @@ def calculate_logo_data():
         else:
             data = request.json
 
+        # print(data)
+
         image = request.json['image_data']
         image_type = request.json['image_type']
         reference_measure_cm = float(request.json['reference_measure_cm'])
         ref_type = request.json['ref_type']
+        letter_type = request.json['letter_type']
         
         customer_data = {
             "company_name": request.json['company_name'],
@@ -213,7 +252,7 @@ def calculate_logo_data():
         image = image.convert('RGB')
         image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-        calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type)
+        calculation_data, customer_data, rail_price, error = process_image_thread(image, reference_measure_cm, customer_data, save_customer_data, ref_type, letter_type)
 
         if error is None and calculation_data is not None:
             results['element_heights'] = []
@@ -234,6 +273,8 @@ def calculate_logo_data():
             results['rail_price'] = rail_price
             results['output_image'] = calculation_data['output_image']
             results['customer_data'] = customer_data
+            results['letter_type'] = letter_type
+
             
             message = {
                 'error': None,
@@ -249,6 +290,107 @@ def calculate_logo_data():
         else:
             if error is None:
                 error = "Ein unbekannter Fehler ist aufgetreten."
+            message = {
+                'error': error,
+                'data': results
+            }
+            resp = jsonify(message)
+            resp.status_code = 500
+            return resp
+
+    except Exception as ex:
+        print("\n")
+        print("------------------------------------------------")
+        print("   FEHLER:- " + str(ex))
+        print("------------------------------------------------")
+        print("\n")
+        print("---------------- Fehler-Traceback ---------------")
+        print(traceback.format_exc())
+        print("------------------------------------------------")
+        print("\n")
+
+        message = {
+            'error': str(traceback.format_exc()),
+            'data': results
+        }
+        resp = jsonify(message)
+        resp.status_code = 500
+        return resp
+
+@app.route('/lightbox_calculation',methods=['POST'])
+def lightbox_calculation():
+
+    try:
+        results = {}
+
+        if len(request.form) > 0:
+            data = json.loads(request.form['data'])
+        else:
+            data = request.json
+        print(data)
+        width = float(request.json['width'])
+        height = float(request.json['height'])
+        type = request.json['type']
+        lkw = request.json['lkw']
+        save_customer_data = request.json['save_customer_data']
+
+        customer_data = {
+            "company_name": request.json['company_name'],
+            "customer_name": request.json['customer_name'],
+            "customer_street": request.json['customer_street'],
+            "customer_city": request.json['customer_city'],
+            "customer_zipcode": request.json['customer_zipcode'],
+            "customer_phone": request.json['customer_phone'],
+            "customer_email": request.json['customer_email']
+        }
+
+        final_price, error = lightbox_calculate_price(width, height, type, lkw, customer_data, save_customer_data)
+
+        if error == None:
+            if final_price != 0:
+
+                results['final_price'] = final_price
+                results['width'] = width
+                results['height'] = height
+                results['type'] = type
+                results['lkw'] = lkw
+                results['customer_data'] = customer_data
+                results['msg'] = None
+                # print("results: ", results)
+                
+                message = {
+                    'error': None,
+                    'data': results
+                }
+                resp = jsonify(message)
+                resp.status_code = 200
+
+                del data, results, message
+                gc.collect()
+                return resp
+
+            else:
+                results['final_price'] = final_price
+                results['width'] = width
+                results['height'] = height
+                results['type'] = type
+                results['lkw'] = lkw
+                results['customer_data'] = customer_data
+                results['msg'] = f"Price NOT applicable for these dimensions -> Width: {width}, Height: {height}"
+                # print("results: ", results)
+                
+                message = {
+                    'error': f"Price NOT applicable for these dimensions -> Width: {width}, Height: {height}",
+                    'data': results
+                }
+                resp = jsonify(message)
+                resp.status_code = 200
+
+                del data, results, message
+                gc.collect()
+                return resp
+
+        else:
             message = {
                 'error': error,
                 'data': results

@@ -793,6 +793,7 @@
 
     <script src="assets/js/jquery-3.7.1.js"></script>
     <script src="assets/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/sweetalert2.js"></script>
     <script>
         let fileType;
         let letter_type;
@@ -894,14 +895,20 @@
 
         $('#contactForm').submit(function(event) {
             event.preventDefault();
+            $(".contactFormAction").prop("disabled", true)
             var formData = $(this).serializeArray();
-            var imageSrc = $('#uploadedImg').attr('src').split(',')[1];
+            if($('.imageData').val() == ''){
+                var imageSrc = $('#uploadedImg').attr('src').split(',')[1];
+            }else{
+                var imageSrc = $('.imageData').val().split(',')[1];
+            }
 
             let save_customer_data = false
             if(Number($(".save_customer_data").val())){
                 save_customer_data = true;
                 var imageSrc = $('.imageData').val().split(',')[1];
             }
+            console.log("imageSrc", imageSrc)
             formData.push({ name: 'save_customer_data', value: save_customer_data });
             
             formData.push({ name: 'image_data', value: imageSrc });
@@ -941,6 +948,15 @@
                         }
                         $("#detailModal").modal('hide');
                         $("#letterModalButton").attr("disabled", false);
+
+                        if(Number($(".save_customer_data").val())){
+                            Swal.fire({
+                                title: "Super",
+                                text: "Dein Angebot wird jetzt generiert und ist in ca 2 Minuten in deinem E-Mail Postfach",
+                                icon: "success"
+                            });
+                        }
+                        $(".contactFormAction").prop("disabled", false)
                     }
                 },
                 error: function(xhr, status, error) {
@@ -962,6 +978,7 @@
 
         $('#lightboxContactForm').submit(function(event) {
             event.preventDefault();
+            $(".lightboxContactFormAction").prop("disabled", true)
             var formData = $(this).serializeArray();
 
             let save_customer_data = false
@@ -1006,16 +1023,41 @@
                         }else{
                             $(".lightboxPriceBtn").prop("disabled", true)
                         }
-                        newWidth = Math.min(response.data.width, maxWidth);
-                        newHeight = Math.min(response.data.height, maxHeight);
 
-                        $(".lightbox-upload-box").width(newWidth);
-                        $(".lightbox-upload-box").height(newHeight);
+                        newWidth = response.data.width;
+                        newHeight = response.data.height;
+                        console.log("newWidth", newWidth)
+                        console.log("newHeight", newHeight)
+                        console.log("maxWidth", maxWidth)
+                        console.log("maxHeight", maxHeight)
+                        if (newWidth > maxWidth || newHeight > maxHeight) {
+                            const widthRatio = maxWidth / newWidth;
+                            const heightRatio = maxHeight / newHeight;
+                    
+                            // Use the smaller ratio to fit within boundaries
+                            const scalingFactor = Math.min(widthRatio, heightRatio);
+                    
+                            newWidth = newWidth * scalingFactor;
+                            newHeight = newHeight * scalingFactor;
+                        }
 
-                        /* $(".lightbox-upload-box").css("width", response.data.width + "px");
-                        $(".lightbox-upload-box").css("height", response.data.height + "px"); */
+                        /* $(".lightbox-upload-box").width(newWidth);
+                        $(".lightbox-upload-box").height(newHeight); */
+
+                        $(".lightbox-upload-box").css("width", newWidth + "px");
+                        $(".lightbox-upload-box").css("height", newHeight + "px");
+
                         $("#lightboxDetailModal").modal('hide');
                         $("#lightboxModalButton").attr("disabled", false);
+
+                        if(Number($(".lightbox_save_customer_data").val())){
+                            Swal.fire({
+                                title: "Super",
+                                text: "Dein Angebot wird jetzt generiert und ist in ca 2 Minuten in deinem E-Mail Postfach",
+                                icon: "success"
+                            });
+                        }
+                        $(".lightboxContactFormAction").prop("disabled", false)
                     }
                 },
                 error: function(xhr, status, error) {

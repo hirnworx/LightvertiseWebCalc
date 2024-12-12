@@ -1991,7 +1991,7 @@ h4 {
     }
     .navbar-brand {
         margin-right: 0;
-        margin-left: 40px;
+        /* margin-left: 40px; */
     }
 
     .navbar {

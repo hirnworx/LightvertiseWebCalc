@@ -1972,6 +1972,20 @@ h4 {
 }
 /* media query  */
 @media (max-width:767px) {
+    .navbar{
+    }
+    .back-to-go{
+        -webkit-box-ordinal-group: 2;
+            -ms-flex-order: 1;
+                order: 1;
+        margin-top: 20px;
+    }
+    .navbar-brand{
+        width: 100%;
+        margin: auto;
+        display: block;
+        text-align: center;
+    }
     .inner-lightbox{
         width: 100% !important;
     }
@@ -1981,10 +1995,10 @@ h4 {
     }
 
     .navbar {
-        -webkit-box-pack: center;
-        -ms-flex-pack: center;
-        justify-content: center;
         padding: 30px 15px 0px;
+        -webkit-box-pack: initial;
+            -ms-flex-pack: initial;
+                justify-content: initial;
     }
 
     .upload-box .card-body .inner-content i {
@@ -2891,9 +2905,14 @@ h4 {
         margin-top: 100px !important;
     }
     .letter-screen, .lightboxScreen{
+        display: -webkit-box;
+        display: -ms-flexbox;
         display: flex;
-        align-items: center;
-        flex-wrap: wrap;
+        -webkit-box-align: center;
+            -ms-flex-align: center;
+                align-items: center;
+        -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
         min-height: calc(100vh - 95px);
     }
 }

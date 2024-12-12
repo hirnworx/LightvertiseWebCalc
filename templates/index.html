@@ -244,7 +244,7 @@
                                                 <img src="" alt="450" class="img-fluid my-0" id="uploadedImg">
                                                 <input type="hidden" class="imageData" value="">
                                             </div>
-                                            <div class="text-right">
+                                            <div class="text-right letterPrice hide">
                                                 <p>Kalkulierter Preis:</p>
                                                 <!-- <h4>€ 9.425,-</h4> -->
                                                 <h4 class="price_including_rail">€ 9.425,-</h4>
@@ -932,6 +932,7 @@
                 data: JSON.stringify(dataObject),
                 success: function(response) {
                     if(response){
+                        $(".letterPrice").removeClass("hide");
                         var modifiedString = response.data.output_image.slice(2, -1);
                         $('#uploadedImg').attr('src', `data:image/png;base64,${modifiedString}`);
                         $(".price_including_rail").html("€ " + response.data.price_including_rail.toFixed(2) )
@@ -1113,6 +1114,7 @@
         slider.oninput = function () {
             output.val(this.value);
             $("#length, #width").addClass("hide");
+            $(".letterPrice").addClass("hide");
             $('#uploadedImg').attr('src', $(".imageData").val());
             $(".price_including_rail").html('');
             $("#letterModalButton").attr("disabled", true);
